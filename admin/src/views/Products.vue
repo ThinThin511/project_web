@@ -8,8 +8,8 @@
         <div class="product__form" :class="{'product__form--active': product_form }">
             <form action="" @submit.prevent="handleSubmit">
                 <p class="btn btn-outline-danger close" @click="handleProduct">&times</p>
-                <h3 v-if="!product._id">Thêm sản phẩm</h3>
-                <h3 v-else>Chỉnh sửa sản phẩm</h3>
+                <h3 v-if="!product._id">Thêm sách</h3>
+                <h3 v-else>Chỉnh sửa sách</h3>
                 <div class="product__form__item">
                     <p>Tên:</p>
                     <input required type="text" v-model="ten">

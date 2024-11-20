@@ -3,7 +3,7 @@
         <h3>Đơn hàng của bạn</h3>
         <div class="order__list order__list__title row col-sm-11">
             <div class="order__list__item col-sm-5"></div>
-            <div class="order__list__item col-sm-2">Tổng tiền</div>
+            <!-- <div class="order__list__item col-sm-2">Tổng tiền</div> -->
             <div class="order__list__item col-sm-2">Ngày mượn</div>
             <div class="order__list__item col-sm-2">Ngày trả</div>
             <div class="order__list__item col-sm-1">Trạng thái</div>
@@ -14,12 +14,12 @@
                     <img :src="'http://localhost:3000/static/'+item_item.sach.hinhanh" alt="">
                     <div>
                         <p>{{ item_item.sach.ten }}</p>
-                        <p>x{{ item_item.soluong }} {{ item_item.gia.toLocaleString() }} VNĐ</p>
+                        <!-- <p>x{{ item_item.soluong }} {{ item_item.gia.toLocaleString() }} VNĐ</p> -->
                         <!-- <p>{{ item_item.sach.ten }}</p> -->
                     </div>
                 </div>
             </div>
-            <div class="order__list__item col-sm-2">{{ item.tongtien.toLocaleString() }} VNĐ</div>
+            <!-- <div class="order__list__item col-sm-2">{{ item.tongtien.toLocaleString() }} VNĐ</div> -->
             <div class="order__list__item col-sm-2">{{ item.ngaymuon }}</div>
             <div class="order__list__item col-sm-2">{{ item.ngaytra }}</div>
             <div v-if="item.trangthai == 'Đã trả'" class="order__list__item col-sm-1 text-success">

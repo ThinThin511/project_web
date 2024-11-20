@@ -47,6 +47,7 @@
 <script>
 import StaffService from '@/services/staff.service.js'
 export default {
+    
     props: [
         "nameTable"
     ],

@@ -66,6 +66,7 @@
 <script>
 import TableOrder from "@/components/TableOrder.vue";
 import staffService from "@/services/staff.service";
+import ProductService from"@/services/product.service";
 export default {
     components: {
         TableOrder
@@ -107,9 +108,14 @@ export default {
             return ngay_tra - ngay_muon < 7*24*60*60*1000; //7 ngày
         },
         async handleSubmit() {
-            if(!this.handlePhuthu)
+            // Kiểm tra lại trạng thái và tính phụ thu nếu có
+            if (!this.handlePhuthu()) {
                 this.phuthu = this.tongtien * 20 / 100;
-            !this.phuthu ? this.tongtien = this.tongtien : this.tongtien = this.tongtien + this.tongtien * 20 / 100
+            }
+            // Cập nhật tổng tiền
+            this.tongtien = this.phuthu ? this.tongtien + this.tongtien * 20 / 100 : this.tongtien;
+
+            // Dữ liệu gửi lên API
             const data = {
                 _id: this.order._id,
                 ngaymuon: this.ngaymuon,
@@ -117,9 +123,22 @@ export default {
                 docgia: this.docgia,
                 tongtien: this.tongtien,
                 sach: this.book,
-                trangthai: this.trangthai, 
-            }
-            if(await staffService.updateOrder(data)) {
+                trangthai: this.trangthai,
+            };
+
+            // Gọi API cập nhật đơn mượn
+            const response = await staffService.updateOrder(data);
+
+            if (response) {
+                // Nếu cập nhật đơn mượn thành công, kiểm tra nếu trạng thái là 'Đã trả'
+                if (this.trangthai === "Đã trả") {
+                    // Cập nhật số lượng sách trong kho
+                    for (let item of this.book) {
+                        // Gọi API để cập nhật số lượng sách trong kho, số lượng trả lại là âm
+                        await ProductService.updateOrderStatus( item.sach._id, item.soluong );
+                    }
+                }
+                // Đóng form chỉnh sửa
                 this.order_form = !this.order_form;
             }
         }
