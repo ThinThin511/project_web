@@ -1,0 +1,199 @@
+<template>
+    <div class="login">
+        
+        <div class="login__header">
+            <img src="@/assets/logo.png" alt="Logo" class="login__logo__img">
+            <span class="login__title">Trang quản lý</span>
+        </div>
+        <div class="image">
+            <!-- <img src="" alt=""> -->
+        </div>
+        <div class="form">
+            <form action="" method="" @submit.prevent="handleSubmit">
+                    <h1>ĐĂNG NHẬP</h1>
+                
+                    <div class="login__info__item">
+                        <i class="ri-user-line"></i>
+                        <input required :class="{'error': error}" type="text" v-model="sodienthoai" placeholder="Số điện thoại">
+                    </div>
+                    <div class="login__info__item">
+                        <i class="ri-lock-line"></i>
+                        <input required :class="{'error': error}" type="password" v-model="password" placeholder="Mật khẩu">
+                    </div>
+                    <p>Chưa có tài khoản? <router-link to="/register" class="">Đăng ký</router-link></p>
+                    <button class="m-1 btn btn-info">Đăng nhập</button>
+            </form>
+        </div>
+    </div>
+</template>
+
+<script>
+import { useUserStore } from '@/stores/userStore';
+import StaffService from '@/services/staff.service';
+import router from '@/router';
+
+export default {
+    methods: {
+        async handleSubmit() {
+            const data = {
+                sodienthoai: this.sodienthoai,
+                password: this.password
+            }
+ 
+            try {
+                const user = await StaffService.login(data);
+                if(user) {
+                    const { accessToken, ...orther } = user;
+                    this.userStore.setUser(orther)
+                    console.log(this.userStore.login);
+                    router.push('/')
+                }
+            } catch (e) {
+                this.error = true;
+                console.log(e);
+            }
+
+        }
+    },
+    data() {
+        return {
+            userStore: useUserStore(),
+            sodienthoai: '',
+            password: '',
+            error: false,
+        }
+    },
+}
+</script>
+
+<style scoped>
+.login {
+    height: 100vh;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    text-align: center;
+    width: 100vw;
+    background-color: #f1f9f1; 
+    color: #000000;
+}
+.login__header {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1;
+}
+
+.login__logo__img {
+    height: 100px; /* Kích thước của logo */
+    width: auto;
+    margin-right: 10px; /* Khoảng cách giữa logo và chữ */
+}
+
+.login__title {
+    font-size: 3rem;
+    font-weight: 500;
+    color:#2ecc71; /* Màu chữ của "Trang quản lý" */
+}
+
+.login .image {
+    min-width: 50vw;
+    height: 80vh;
+    display: flex;
+    position: relative;
+    background: url('../assets/login.jpg');
+    background-color: #2ecc71; /* Màu nền xanh lá nhạt */
+    background-size: cover;
+    object-fit: cover;
+}
+
+.login .form h1 {
+    font-weight: 500;
+    font-size: 2.5rem;  
+    color: #2ecc71; /* Màu xanh lá nhạt cho tiêu đề form */
+}
+
+.login .form {
+    padding: 10px 20px;
+    color: #000000;
+    min-width: 50%;
+    height: 100vh;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #f1f9f1; /* Màu nền sáng nhạt, gần với màu trắng */
+}
+
+.login .form form {
+    background-color: #ffffff; /* Nền trắng cho form */
+    border-radius: 12px;
+    padding: 20px 20px;
+    width: fit-content;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 8px; /* Thêm bóng nhẹ */
+}
+
+.login__info__item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px;
+}
+
+.login__info__item i {
+    font-size: 1.8rem;
+    margin-right: 15px;
+    color: #2ecc71; /* Màu xanh lá nhạt cho icon */
+}
+
+.login__info__item input, textarea {
+    width: 200px;
+    border-radius: 10px;
+    border: 1px solid #2ecc71; /* Viền màu xanh lá nhạt */
+    background-color: #e0f5e0; /* Màu nền sáng nhẹ cho input */
+    height: 40px;
+    padding-left: 10px;
+}
+
+.login__info__item input:focus, textarea:focus {
+    border-color: #27ae60; /* Màu viền khi focus (xanh lá đậm hơn) */
+    outline: none;
+}
+
+.login form a {
+    color: #2ecc71; /* Màu xanh lá nhạt cho liên kết */
+}
+
+.login button {
+    max-width: 200px;
+    align-self: center;
+    background-color: #2ecc71; /* Màu nền xanh lá nhạt cho nút */
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.login button:hover {
+    background-color: #27ae60; /* Màu nền khi hover (xanh lá đậm hơn) */
+    transform: scale(1.05);
+}
+
+.login p {
+   color: #333;
+}
+
+.login p a {
+   color: #2ecc71; /* Màu xanh lá nhạt cho liên kết "Đăng ký" */
+}
+
+
+
+</style>
