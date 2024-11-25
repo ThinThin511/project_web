@@ -2,26 +2,31 @@
     <div class="order">
         <h3>Đơn hàng của bạn</h3>
         <div class="order__list order__list__title row col-sm-11">
-            <div class="order__list__item col-sm-5"></div>
-            <!-- <div class="order__list__item col-sm-2">Tổng tiền</div> -->
-            <div class="order__list__item col-sm-2">Ngày mượn</div>
-            <div class="order__list__item col-sm-2">Ngày trả</div>
+            <div class="order__list__item col-sm-1">STT</div>
+            <div class="order__list__item col-sm-3">Chi tiết đơn hàng</div>
+            <div class="order__list__item col-sm-3">Địa chỉ giao hàng</div>
+            <div class="order__list__item col-sm-2">Ghi chú</div>
+            
+            <div class="order__list__item col-sm-2">Tổng tiền</div>
+            
             <div class="order__list__item col-sm-1">Trạng thái</div>
         </div>
         <div v-for="(item, index) in order" class="order__list row col-sm-11" :key="item.id">
-            <div class="order__list__item order__list__item--sach col-sm-5">
-                <div class="order__list__item__sach d-flex" v-for="item_item in item.sach">
-                    <img :src="'http://localhost:3000/static/'+item_item.sach.hinhanh" alt="">
+            <div class="order__list__item col-sm-1">{{ index+1 }}</div>
+            <div class="order__list__item order__list__item--sach col-sm-3">
+                <div class="order__list__item__sach d-flex" v-for="item_item in item.product">
+                    <img :src="'http://localhost:3000/static/'+item_item.product.hinhanh" alt="">
                     <div>
-                        <p>{{ item_item.sach.ten }}</p>
-                        <!-- <p>x{{ item_item.soluong }} {{ item_item.gia.toLocaleString() }} VNĐ</p> -->
-                        <!-- <p>{{ item_item.sach.ten }}</p> -->
+                        <p>{{ item_item.product.ten }}</p>
+                        <p>x{{ item_item.soluong }} {{ item_item.gia.toLocaleString() }} VNĐ</p>
+                        
                     </div>
                 </div>
             </div>
-            <!-- <div class="order__list__item col-sm-2">{{ item.tongtien.toLocaleString() }} VNĐ</div> -->
-            <div class="order__list__item col-sm-2">{{ item.ngaymuon }}</div>
-            <div class="order__list__item col-sm-2">{{ item.ngaytra }}</div>
+            <div class="order__list__item col-sm-3">{{ item.user.diachi }}</div>
+            <div class="order__list__item col-sm-2">{{ item.note }}</div>
+            <div class="order__list__item col-sm-2">{{ item.tongtien.toLocaleString() }} VNĐ</div>
+            
             <div v-if="item.trangthai == 'Đã trả'" class="order__list__item col-sm-1 text-success">
                 {{ item.trangthai }}
             </div>

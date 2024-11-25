@@ -6,19 +6,19 @@
             </div>
         </div>
         <div class="products__product col-lg-10 col-md-9 col-12">
-            <!-- <Filter @sort="sort" @range="range" /> -->
-            <div class="products__product__list" v-if="products.length>0">
-                <div class="products__product__item col-lg-2 col-3" v-for="item in products">
+            <Filter @sort="sort" @range="range" />
+            <div class="products__product__list" v-if="products.length > 0">
+                <div class="products__product__item col-lg-2 col-3" v-for="item in products" :key="item._id">
                     <router-link :to="{ path: '/product/' + item._id}" class="products__product__item__image">
-                        <img :src="'http://localhost:3000/static/'+item.hinhanh" alt="" class="">
+                        <img :src="'http://localhost:3000/static/' + item.hinhanh" alt="Product image">
                     </router-link>
                     
                     <div class="products__product__item__information">
                         <p class="products__product__item__name">{{ item.ten }}</p>
-                        <!-- <p class="products__product__item__price">{{ parseInt(item.dongia).toLocaleString() }}</p> -->
+                        <p class="products__product__item__price">{{ parseInt(item.dongia).toLocaleString() }}</p>
                     </div>
                     <div class="products__product__item__button">
-                        <button v-if="item.soluong > 0" @click="addToCart(item)">Thêm vào giỏ sách</button>
+                        <button v-if="item.soluong > 0" @click="addToCart(item)">Thêm vào giỏ hàng</button>
                         <button v-else class="btn btn-secondary" disabled>Hết hàng</button>
                         <router-link :to="{ path: '/product/' + item._id}">Xem thêm</router-link>
                     </div>
@@ -34,6 +34,7 @@ import ProductsService from "@/services/book.service";
 import userService from "@/services/user.service";
 import { useUserStore } from "@/stores/userStore";
 import Filter from "@/components/Filter.vue";
+
 export default {
     components: {
         Filter,
@@ -43,23 +44,21 @@ export default {
             this.query = this.$route.query.search;
             this.getData();
         },
-
-
     },
     mounted() {
-       this.getData();
+        this.getData();
     },
     computed: {
         productStrings() {
             return this.products.map((product) => {
-                const { ten, tacgia, mota, nhaxuatban } = product;
-                return [ten, tacgia, mota, nhaxuatban].join(" ").toUpperCase();
+                const { ten, mota, nhasanxuat } = product;
+                return [ten, mota, nhasanxuat].join(" ").toUpperCase();
             });
         },
         filteredProducts() {
-            if (this.query == '') return this.products;
-            return this.products.filter((_products, index) =>
-                    this.productStrings[index].includes(this.query.toUpperCase())
+            if (this.query === '') return this.products;
+            return this.products.filter((_, index) =>
+                this.productStrings[index].includes(this.query.toUpperCase())
             );
         },
     },
@@ -73,51 +72,47 @@ export default {
     methods: {
         async getData() {
             this.products = await ProductsService.getAll();
-            this.products = this.products.filter(item => item.deleted == 0);
-        
-            if(this.query != '') {
+            this.products = this.products.filter(item => item.deleted === 0); // Giữ lại các sản phẩm chưa bị xóa
+            
+            if (this.query !== '') {
                 this.products = this.filteredProducts;
             }
-
         },
         async addToCart(data) {
             if (!useUserStore().login) {
-              // Hiển thị thông báo yêu cầu đăng nhập
-              const confirmed = confirm('Bạn cần đăng nhập để mua hàng. Bạn có muốn đăng nhập ngay không?');
-              if (confirmed) {
-                // Chuyển hướng đến trang đăng nhập
-                this.$router.push('/login'); // Thay đổi '/login' thành địa chỉ của trang đăng nhập của bạn
+                // Hiển thị thông báo yêu cầu đăng nhập
+                const confirmed = confirm('Bạn cần đăng nhập để mua hàng. Bạn có muốn đăng nhập ngay không?');
+                if (confirmed) {
+                    // Chuyển hướng đến trang đăng nhập
+                    this.$router.push('/login'); // Đảm bảo trang đăng nhập chính xác
                 }
-            }
-            else {
+            } else {
                 const { _id, dongia, ten, hinhanh } = data;
-                const filterData = { _id, dongia, ten, hinhanh }
-
-                const success = await userService.addCart(filterData)
-                if(!success.message){
-                    this.message = "Thành công"
-                }
-                else this.message = "Thất bại"
+                const filterData = { _id, dongia, ten, hinhanh };
+                const success = await userService.addCart(filterData);
+                this.message = success.message ? "Thất bại" : "Thành công";
             }
         },
         hideNotify() {
-            this.message = ''
+            this.message = '';
         },
         async sort(data) {
-            if (data == 'asc') 
-                this.products = this.products.sort((a, b) => a.dongia - b.dongia)
-            else if (data == 'desc')
-                this.products = this.products.sort((a, b) => b.dongia - a.dongia)
-            else 
+            if (data === 'asc') {
+                this.products = this.products.sort((a, b) => a.dongia - b.dongia);
+            } else if (data === 'desc') {
+                this.products = this.products.sort((a, b) => b.dongia - a.dongia);
+            } else {
                 this.products = await ProductsService.getAll();
-        },   
+            }
+        },
         async range(data) {
             this.products = await ProductsService.getAll();
             this.products = this.products.filter((item) => parseInt(item.dongia) < parseInt(data));
-        }  
+        }
     }
-}   
+}
 </script>
+
 
 <style>
 

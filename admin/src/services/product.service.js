@@ -16,11 +16,11 @@ class ProductService {
   async deleteProduct(data) {
     return (await this.api.delete(`/${data._id}`)).data;
   }
-  async updateOrderStatus(bookId, quantity) {
+  async updateOrderStatus(productId, quantity) {
     try {
-      console.log(bookId, quantity);
-      const response = await this.api.put(`/updateQuantity/${bookId}`, {
-        bookId,
+      console.log(productId, quantity);
+      const response = await this.api.put(`/updateQuantity/${productId}`, {
+        productId,
         quantity,
       });
       return response.data;

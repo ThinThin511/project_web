@@ -2,46 +2,47 @@
     <div class="product">
         <div class="product__header">
             <div class="product__header__action">
-                <button  @click="handleProduct">+</button>
+                <button @click="handleProduct">+</button>
             </div>
         </div>
-        <div class="product__form" :class="{'product__form--active': product_form }">
+        <div class="product__form" :class="{ 'product__form--active': product_form }">
             <form action="" @submit.prevent="handleSubmit">
-                <p class="btn btn-outline-danger close" @click="handleProduct">&times</p>
-                <h3 v-if="!product._id">Thêm sách</h3>
-                <h3 v-else>Chỉnh sửa sách</h3>
+                <p class="btn btn-outline-danger close" @click="handleProduct">&times;</p>
+                <h3 v-if="!product._id">Thêm sản phẩm</h3>
+                <h3 v-else>Chỉnh sửa sản phẩm</h3>
                 <div class="product__form__item">
                     <p>Tên:</p>
                     <input required type="text" v-model="ten">
-                    <p>Tác giả:</p>
-                    <input required type="text" v-model="tacgia">
                 </div>
                 <div class="product__form__item">
-                    <p>Nhà xuất bản:</p>
-                    <!-- <input required type="text" v-model="nhaxuatban"> -->
-                    <select name="" v-model="nhaxuatban" id="">
-                        <option :value="product.nhaxuatban" selected>{{ product.nhaxuatban }}</option>
-                        <option v-for="item in publisher" :value="item.ten">{{ item.ten }}</option>
-                    </select>
-                    <p>Năm xuất bản:</p>
-                    <input required type="text" v-model="namxuatban">
+                    <p>Hình ảnh:</p>
+                    <img v-if="product.hinhanh && !hinhanhPreview" :src="'http://localhost:3000/static/' + product.hinhanh" alt="Hình ảnh sản phẩm">
+                    <img v-else-if="hinhanhPreview" :src="hinhanhPreview" alt="Hình ảnh xem trước">
+                    <input type="file" accept="image/*" @change="handleImage($event.target.files[0])">
                 </div>
                 <div class="product__form__item">
-                    <p>Giá:</p>
+                    <p>Đơn giá:</p>
                     <input required type="number" v-model="dongia">
+                </div>
+                <div class="product__form__item">
                     <p>Số lượng:</p>
                     <input required type="number" v-model="soluong">
                 </div>
                 <div class="product__form__item">
-                    <p>Mô tả:</p>
-                    <textarea name="" id="" cols="30" rows="3" v-model="mota">{{ mota }}</textarea>
+                    <p>Danh mục:</p>
+                    <select v-model="danhmuc">
+                        <option v-for="category in categories" :value="category.ten" :key="category._id">{{ category.ten }}</option>
+                    </select>
                 </div>
                 <div class="product__form__item">
-                    <p>Hình ảnh:</p>
-                    <img v-if="product.hinhanh != null && hinhanhPreview == null" :src="'http://localhost:3000/static/'+product.hinhanh" alt="">
-                    <img v-else :src="hinhanhPreview" alt="">
-                    <input v-if="product.hinhanh == null" required type="file" accept="image/*" @change="handleImage($event.target.files[0])">
-                    <input v-if="product.hinhanh != null" type="file" accept="image/*" @change="handleImage($event.target.files[0])">
+                    <p>Nhà sản xuất:</p>
+                    <select v-model="nhasanxuat">
+                        <option v-for="manufacturer in manufacturers" :value="manufacturer.ten" :key="manufacturer._id">{{ manufacturer.ten }}</option>
+                    </select>
+                </div>
+                <div class="product__form__item">
+                    <p>Mô tả:</p>
+                    <textarea v-model="mota" rows="3"></textarea>
                 </div>
                 <button v-if="!product._id">Thêm</button>
                 <button v-else>Cập nhật</button>
@@ -50,113 +51,97 @@
         <TableProduct :nameTable="this.$route.name" @edit="handleEditProduct"></TableProduct>
     </div>
 </template>
+
 <script>
-import TableProduct from '@/components/TableProduct.vue'
-import ProductService from '@/services/product.service.js'
-import staffService from '@/services/staff.service';
+import TableProduct from '@/components/TableProduct.vue';
+import ProductService from '@/services/product.service.js';
+import StaffService from '@/services/staff.service.js';
 
 export default {
     components: {
-        TableProduct
+        TableProduct,
     },
     methods: {
         handleProduct() {
-            this.product = {};
-            this.ten = '';
-            this._id = null;
-            this.mota = '';
-            this.tacgia = '';
-            this.namxuatban = '';
-            this.nhaxuatban = '';
-            this.dongia = 0;
-            this.soluong = 0;
-            this.hinhanh = null,
-            this.hinhanhPreview = null,
+            this.resetForm();
             this.product_form = !this.product_form;
         },
         handleEditProduct(product) {
             this.product = product;
-            // const {ten, hinhanh, mota, dongia, soluong, _id} = product;
-            this.ten = product.ten;
-            this._id = product._id;
-            this.mota = product.mota;
-            this.tacgia = product.tacgia;
-            this.namxuatban = product.namxuatban;
-            this.nhaxuatban = product.nhaxuatban;
-            this.dongia = product.dongia;
-            this.soluong = product.soluong;
+            const { ten, hinhanh, dongia, danhmuc, soluong, mota, nhasanxuat } = product;
+            this.ten = ten;
             this.hinhanhPreview = null;
+            this.dongia = dongia;
+            this.danhmuc = danhmuc;
+            this.soluong = soluong;
+            this.mota = mota;
+            this.nhasanxuat = nhasanxuat;
             this.product_form = !this.product_form;
         },
         async handleSubmit() {
-            if(this.product._id == null) {
-                const data = new FormData();
-                data.append('ten', this.ten);
-                data.append('tacgia', this.tacgia);
-                data.append('namxuatban', this.namxuatban);
-                data.append('nhaxuatban', this.nhaxuatban);
-                data.append('dongia', this.dongia);
-                data.append('soluong', this.soluong);
-                data.append('mota', this.mota);
-                data.append('hinhanh', this.hinhanh);
-                console.log(data);
-                if(await ProductService.addProduct(data)) {
-                    alert("Sản phẩm được thêm thành công!");
-                    this.product = data;
-                    this.product_form = !this.product_form;
-                }
-            }
-            if(this.product._id != null) {
-                const data = new FormData();
-                data.append('_id', this._id);
-                data.append('ten', this.ten);
-                data.append('tacgia', this.tacgia);
-                data.append('namxuatban', this.namxuatban);
-                data.append('nhaxuatban', this.nhaxuatban);
-                data.append('dongia', this.dongia);
-                data.append('soluong', this.soluong);
-                data.append('mota', this.mota);
-                this.hinhanhPreview != null ? data.append('hinhanh', this.hinhanh) : data.append('hinhanh', this.product.hinhanh);
-                if(await ProductService.updateProduct(data)) {
-                    alert("Sản phẩm được cập nhật thành công!");
-                    this.product = data;
-                    this.product_form = !this.product_form;
-                }
-            }
+            const data = new FormData();
+            data.append('ten', this.ten);
+            
+            data.append('dongia', this.dongia);
+            data.append('danhmuc', this.danhmuc);
+            data.append('soluong', this.soluong);
+            data.append('mota', this.mota);
+            data.append('nhasanxuat', this.nhasanxuat);
 
+            if (this.product._id == null) {
+                data.append('hinhanh', this.hinhanh);
+                if (await ProductService.addProduct(data)) {
+                    alert('Thêm sản phẩm thành công!');
+                    this.product_form = !this.product_form;
+                }
+            } else {
+                data.append('_id', this.product._id);
+                this.hinhanhPreview != null ? data.append('hinhanh', this.hinhanh) : data.append('hinhanh', this.product.hinhanh);
+                if (await ProductService.updateProduct(data)) {
+                    alert('Cập nhật sản phẩm thành công!');
+                    this.product_form = !this.product_form;
+                }
+            }
         },
         handleImage(img) {
             this.hinhanh = img;
             this.hinhanhPreview = URL.createObjectURL(img);
-        }
+        },
+        resetForm() {
+            this.ten = '';
+            this.danhmuc = '';
+            this.nhasanxuat = '';
+            this.mota = '';
+            this.dongia = 0;
+            this.soluong = 0;
+            this.hinhanh = null;
+            this.hinhanhPreview = null;
+            this.product = {};
+        },
     },
     async mounted() {
-        this.publisher = await staffService.getAllPublisher();
-        this.publisher = this.publisher.filter(item => item.deleted != 1);
-
+        this.categories = await StaffService.getAllCategories();
+        this.categories = this.categories.filter(item => item.deleted != 1);
+        this.manufacturers = await StaffService.getAllManufacturer();
+        this.manufacturers = this.manufacturers.filter(item => item.deleted != 1);
     },
     data() {
         return {
-            publisher: '',
             product_form: false,
             product: {},
+            categories: [],
+            manufacturers: [],
             ten: '',
+            danhmuc: '',
+            nhasanxuat: '',
+            mota: '',
             dongia: 0,
             soluong: 0,
-            mota: '',
-            _id: '',
-            tacgia: '',
-            nhaxuatban: '',
-            namxuatban: '',
-            filter: '',
-            productChange: 0,
             hinhanh: null,
-            hinhanhPreview: null
-        }
-    }
-
-}
-
+            hinhanhPreview: null,
+        };
+    },
+};
 
 </script>
 <style>
@@ -225,7 +210,7 @@ export default {
     width: 100%;
     position: fixed;
     z-index: 1;
-    height: 100%;
+    height: 80%;
     top: -200%;
     left: 0;
     display: flex;
@@ -260,9 +245,9 @@ export default {
 .product__form__item {
     display: flex;
     justify-content: space-between;
-    padding: 15px 20px; /* Khoảng cách giữa các mục */
+    padding: 5px 10px; /* Khoảng cách giữa các mục */
     text-align: start;
-    margin-bottom: 20px; /* Khoảng cách giữa các mục */
+    margin-bottom: 5px; /* Khoảng cách giữa các mục */
 }
 
 .product__form__item p {

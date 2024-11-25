@@ -10,20 +10,20 @@
                     <p>{{ index+1 }}</p>
                 </div>
                 <div class="cart__body__item__image col-md-2">
-                    <img :src="'http://localhost:3000/static/' + item.sach.hinhanh" alt="Sản phẩm">
+                    <img :src="'http://localhost:3000/static/' + item.product.hinhanh" alt="Sản phẩm">
                 </div>
                 <!-- Tên sản phẩm -->
-                <div class="cart__body__item__name col-md-4">
-                    <p>{{ item.sach.ten }}</p>
+                <div class="cart__body__item__name col-md-2">
+                    <p>{{ item.product.ten }}</p>
                 </div>
                 <!-- Số lượng sản phẩm -->
                 <div class="cart__body__item__quanlity col-md-2">
                     <input type="number" min="1" @focusout="update(item)" v-model="item.soluong" />
                 </div>
                 <!-- Giá sản phẩm -->
-                <!-- <div class="cart__body__item__price col-md-2">
-                    <p>{{ item.sach.dongia.toLocaleString() }} VND</p>
-                </div> -->
+                <div class="cart__body__item__price col-md-2">
+                    <p>{{ (item.product.dongia * item.soluong).toLocaleString() }} VND</p>
+                </div>
                 <!-- Nút xóa -->
                 <div class="cart__body__item__action col-md-2">
                     <i class="fa-solid fa-x btn btn-danger" @click="deleteCart(item)"></i>
@@ -38,6 +38,7 @@
 <script>
 import { useUserStore } from '@/stores/userStore';
 import userService from '@/services/user.service';
+import ProductService from '@/services/book.service';
 import Payment from '../components/Payment.vue';
 import Notification from '../components/Notification.vue'
 export default {
@@ -65,6 +66,7 @@ export default {
                 this.message = updated.message
         },
         async deleteCart(data) {
+            // await ProductService.updateOrderStatus( data.product._id, data.soluong );
             const deleted = await userService.deleteCart(data._id)
             if(deleted)
                 this.getCart()

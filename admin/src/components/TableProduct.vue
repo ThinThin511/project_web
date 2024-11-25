@@ -7,24 +7,32 @@
         <div class="table__name">{{ nameTable }}</div>
         <div class="table__title row" >
             <div class="table__title__item col-sm-1">STT</div>
-            <div class="table__title__item col-sm-2">HÌNH ẢNH</div>
+            <div class="table__title__item col-sm-1">HÌNH ẢNH</div>
             <div class="table__title__item col-sm-2">
                 TÊN
             </div>
-            <div class="table__title__item col-sm-2">GIÁ
+            <div class="table__title__item col-sm-1">GIÁ
                 
             </div>
-            <div class="table__title__item col-sm-2">SỐ LƯỢNG
+            <div class="table__title__item col-sm-1">SỐ LƯỢNG
 
+            </div>
+            <div class="table__title__item col-sm-2">NHÀ SẢN XUẤT
+                
+            </div>
+            <div class="table__title__item col-sm-2">DANH MỤC
+                
             </div>
             <div class="table__title__item col-sm-2"></div>
         </div>
         <div v-for="(item, index) in list" class="table__list row" :key="item.id">
             <div class="table__list__item col-sm-1">{{ index + 1 }}</div>
-            <div class="table__list__item col-sm-2"><Image :src="item.hinhanh" /></div>
+            <div class="table__list__item col-sm-1"><Image :src="item.hinhanh" /></div>
             <div class="table__list__item col-sm-2">{{ item.ten }} <br> {{ item.category }}</div>
-            <div class="table__list__item col-sm-2">{{ item.dongia }}</div>
-            <div class="table__list__item col-sm-2">{{ item.soluong }}</div>
+            <div class="table__list__item col-sm-1">{{ item.dongia }}</div>
+            <div class="table__list__item col-sm-1">{{ item.soluong }}</div>
+            <div class="table__list__item col-sm-2">{{ item.nhasanxuat }}</div>
+            <div class="table__list__item col-sm-2">{{ item.danhmuc }}</div>
             <div class="table__list__item table__list__item--edit col-sm-1">
                 <i class="ri-edit-line table__icon" @click="handleEmit(item)"></i>
             </div>

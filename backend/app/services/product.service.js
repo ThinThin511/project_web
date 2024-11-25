@@ -62,9 +62,12 @@ class ProductService {
   }
 
   async findById(id) {
-    const result = await this.Product.findOne({
-      _id: ObjectId.isValid(id) ? new ObjectId(id) : null,
-    });
+    if (!ObjectId.isValid(id)) {
+      return null; // Hoặc throw new Error('ID không hợp lệ');
+    }
+
+    const result = await this.Product.findOne({ _id: new ObjectId(id) });
+
     return result;
   }
 

@@ -1,53 +1,41 @@
 <template>
     <div class="payment col-lg-3">
-        <p class="payment__title">Thông tin phiếu mượn</p>
+        <p class="payment__title">Thông tin đơn hàng</p>
         <form class="payment__form" @submit.prevent="handlePayment">
             <!-- Họ và Tên -->
             <div class="payment__item payment__row">
                 <div class="payment__field">
                     <label for="ho">Họ:</label>
-                    <input id="ho" required type="text" v-model="docgia.ho" />
+                    <input id="ho" required type="text" v-model="user.ho" />
                 </div>
                 <div class="payment__field">
                     <label for="ten">Tên:</label>
-                    <input id="ten" required type="text" v-model="docgia.ten" />
+                    <input id="ten" required type="text" v-model="user.ten" />
                 </div>
             </div>
 
             <!-- Địa chỉ -->
             <div class="payment__item">
                 <label for="diachi">Địa chỉ:</label>
-                <input id="diachi" required type="text" v-model="docgia.diachi" />
+                <input id="diachi" required type="text" v-model="user.diachi" />
             </div>
 
             <!-- Số điện thoại -->
             <div class="payment__item">
                 <label for="sdt">Số điện thoại:</label>
-                <input id="sdt" required type="text" v-model="docgia.sodienthoai" />
+                <input id="sdt" required type="text" v-model="user.sodienthoai" />
+            </div>
+            <div class="payment__item">
+                <p>Tổng tiền: 
+                    <span>
+                        {{ tinhtongtien.toLocaleString() }} VNĐ
+                    </span>
+                </p>
             </div>
 
-            <!-- Ngày mượn và Ghi chú -->
+            <!-- Ghi chú -->
             <div class="payment__item payment__row">
-                <div class="payment__field">
-                    <label for="ngaymuon">Ngày mượn:</label>
-                    <input 
-                        id="ngaymuon" 
-                        :class="{ 'payment_item--validate': !validateDates() }" 
-                        type="date" 
-                        @change="validateDates" 
-                        v-model="ngaymuon" 
-                    />
-                </div>
-                <div class="payment__field">
-                    <label for="ngaytra">Ngày trả:</label>
-                    <input 
-                        id="ngaytra" 
-                        :class="{ 'payment_item--validate': !validateDates() }" 
-                        type="date" 
-                        @change="validateDates" 
-                        v-model="ngaytra" 
-                    />
-                </div>
+                
                 <div class="payment__field">
                     <label for="ghichu">Ghi chú:</label>
                     <input id="ghichu" type="text" v-model="note" placeholder="(Tùy chọn)" />
@@ -55,7 +43,7 @@
             </div>
 
             <!-- Hình thức thanh toán -->
-            <!-- <div class="payment__item">
+            <div class="payment__item">
                 <label>Hình thức thanh toán:</label>
                 <div class="payment__method">
                     <label>
@@ -67,11 +55,11 @@
                         Card
                     </label>
                 </div>
-            </div> -->
+            </div>
 
             <!-- Nút thanh toán -->
             <div class="payment__item">
-                <button type="submit">XÁC NHẬN MƯỢN</button>
+                <button type="submit">XÁC NHẬN ĐẶT HÀNG</button>
             </div>
         </form>
     </div>
@@ -87,23 +75,18 @@ export default {
     },
     methods: {
         async handlePayment() {
-            if (!this.validateDates()) {
-                this.message = 'Ngày trả phải lớn hơn ngày mượn';
-                this.$emit('showNotify', this.message);
-                return;
-            }
+            
 
             const data = {
-                sach: this.userStore.cart,
-                docgia: this.docgia,
+                product: this.userStore.cart,
+                user: this.user,
                 note: this.note,
-                // method_payment: this.method_payment,
-                // tongtien: this.tinhtongtien,
-                ngaymuon: this.ngaymuon,
-                ngaytra: this.ngaytra,
+                method_payment: this.method_payment,
+                tongtien: this.tinhtongtien,
+                
             };
 
-            if (data.sach.length > 0) {
+            if (data.product != null) {
                 try {
                     if (await userService.addOrder(data)) {
                         this.message = 'Thành công';
@@ -140,9 +123,8 @@ export default {
         const currentDate = `${yyyy}-${mm}-${dd}`;
         return {
             userStore: useUserStore(),
-            docgia: useUserStore().user,
-            ngaymuon: currentDate,
-            ngaytra: '',
+            user: useUserStore().user,
+            
             method_payment: '',
             note: '',
             message: '',

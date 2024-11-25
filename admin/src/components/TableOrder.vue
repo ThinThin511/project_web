@@ -7,28 +7,32 @@
         <div class="table__name">{{ nameTable }}</div>
         <div class="table__title row" >
             <div class="table__title__item col-sm-1">STT</div>
-            <div class="table__title__item col-sm-3">MÃ PHIẾU</div>
+            
             <div class="table__title__item col-sm-2">
                 TÊN KHÁCH HÀNG
             </div>
-            <!-- <div class="table__title__item col-sm-1">TỔNG TIỀN
+            <div class="table__title__item col-sm-1">TỔNG TIỀN
                
-            </div> -->
-            <div class="table__title__item col-sm-1">NGÀY MƯỢN</div>
-            <div class="table__title__item col-sm-1">NGÀY TRẢ</div>
+            </div>
+            
             <div class="table__title__item col-sm-2">TRẠNG THÁI</div>
+            <div class="table__title__item col-sm-2">GHI CHÚ
+               
+            </div>
+            <div class="table__title__item col-sm-3">ĐỊA CHỈ
+               
+            </div>
             <div class="table__title__item col-sm-1"></div>
 
         </div>
         <div v-for="(item, index) in list" class="table__list row" :key="item.id">
             <div class="table__list__item col-sm-1">{{ index + 1 }}</div>
-            <div class="table__list__item col-sm-3">{{ item._id }}</div>
+            <!-- <div class="table__list__item col-sm-3">{{ item._id }}</div> -->
             <div class="table__list__item col-sm-2">
-                {{ item.docgia.ho+' '+item.docgia.ten }}
+                {{ item.user.ho+' '+item.user.ten }}
             </div>
-            <!-- <div class="table__list__item col-sm-1">{{ item.tongtien }}</div> -->
-            <div class="table__list__item col-sm-1">{{ item.ngaymuon }}</div>
-            <div class="table__list__item col-sm-1">{{ item.ngaytra }}</div>
+            <div class="table__list__item col-sm-1">{{ item.tongtien }}</div>
+            
             <div v-if="item.trangthai == 'Đã trả'" class="table__list__item col-sm-2 text-success">
                 {{ item.trangthai }}
             </div>
@@ -38,6 +42,8 @@
             <div v-else class="table__list__item col-sm-2 text-primary">
                 {{ item.trangthai }}
             </div>
+            <div class="table__list__item col-sm-2">{{ item.note }}</div>
+            <div class="table__list__item col-sm-3">{{ item.user.diachi }}</div>
             <div class="table__list__item col-sm-1">
                 <i class="ri-pencil-line" @click="handleEmit(item)"></i>
             </div>
@@ -62,7 +68,7 @@ export default {
     computed: {
         productStrings() {
             return this.list.map((product) => {
-                const { ho, ten, diachi, sodienthoai } = product.docgia;
+                const { ho, ten, diachi, sodienthoai } = product.user;
                 const { ngaymuon, ngaytra, trangthai, _id } = product;
                 return [ten, ho,diachi, _id, sodienthoai, trangthai, ngaymuon, ngaytra ].join(" ").toUpperCase();
             });
