@@ -44,11 +44,11 @@ export default {
     ],
     watch: {
         list(newValue) {
-            this.getAllPublisher();
+            this.getAllManufacturer();
         }
     },
     mounted() {
-        this.getAllPublisher()
+        this.getAllManufacturer()
     },
     computed: {
         productStrings() {
@@ -65,30 +65,30 @@ export default {
         },
     },
     methods: {
-        async getAllPublisher() {
-            this.list = await StaffService.getAllPublisher();
+        async getAllManufacturer() {
+            this.list = await StaffService.getAllManufacturer();
             this.list = this.list.filter(item => item.deleted != 1);
             if(this.search != '') {
                 this.list = this.filteredProducts;
             }
         },
-        handleEmit(publisher) {
-            this.$emit('edit', publisher);
+        handleEmit(manufacturer) {
+            this.$emit('edit', manufacturer);
         },
-        confirmDelete(publisher) {
-            if (window.confirm('Are you sure you want to delete this publisher?')) {
-                this.handleDelete(publisher);
+        confirmDelete(manufacturer) {
+            if (window.confirm('Are you sure you want to delete this manufacturer?')) {
+                this.handleDelete(manufacturer);
             }
         },
-        async handleDelete(publisher) {
+        async handleDelete(manufacturer) {
             const data = {
-                _id: publisher._id,
-                ten: publisher.ten,
-                diachi: publisher.diachi
+                _id: manufacturer._id,
+                ten: manufacturer.ten,
+                diachi: manufacturer.diachi
             }
             console.log(data)
-            if (await StaffService.deletePublisher(data)) 
-                this.getAllPublisher();
+            if (await StaffService.deleteManufacturer(data)) 
+                this.getAllManufacturer();
         },
     },
     data() {

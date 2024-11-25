@@ -1,5 +1,5 @@
 const express = require("express");
-const book = require("../controllers/book.controller");
+const product = require("../controllers/product.controller");
 // const publisher = require("../controllers/publisher.controller");
 
 const multer = require("multer");
@@ -32,17 +32,17 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(book.findAll)
-  .post(upload.single("hinhanh"), book.create)
+  .get(product.findAll)
+  .post(upload.single("hinhanh"), product.create)
   // .post(book.create)
-  .delete(book.deleteAll);
+  .delete(product.deleteAll);
 
 router
   .route("/:id")
-  .get(book.findOne)
-  .put(upload.single("hinhanh"), book.update)
-  .delete(book.delete);
+  .get(product.findOne)
+  .put(upload.single("hinhanh"), product.update)
+  .delete(product.delete);
 
 // Route mới để cập nhật số lượng sách khi trả lại
-router.route("/updateQuantity/:id").put(book.updateQuantity);
+router.route("/updateQuantity/:id").put(product.updateQuantity);
 module.exports = router;

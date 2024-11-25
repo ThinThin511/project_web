@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const generateAccessToken = require("../middleware/generateAccessToken");
 const generateRefreshToken = require("../middleware/generateRefreshToken");
 const OrderService = require("../services/order.service");
-const BookService = require("../services/book.service");
+const ProductService = require("../services/product.service");
 require("dotenv").config();
 
 exports.create = async (req, res, next) => {
@@ -175,7 +175,7 @@ exports.addCart = async (req, res, next) => {
   try {
     const userService = new UserService(MongoDB.client);
     const cartService = new CartService(MongoDB.client);
-    const bookService = new BookService(MongoDB.client);
+    const productService = new ProductService(MongoDB.client);
 
     const data = req.body;
     const { soluong, ...all } = data;
@@ -183,12 +183,12 @@ exports.addCart = async (req, res, next) => {
 
     const cartItems = [];
     const cartItem = {
-      sach: all,
+      product: all,
       soluong: !data.soluong ? 1 : data.soluong,
       dongia: data.dongia,
     };
     // Kiểm tra số lượng trong kho
-    const countProduct = await bookService.findById(data._id);
+    const countProduct = await productService.findById(data._id);
 
     const findCart = await cartService.find(id, data._id);
     // console.log(cartItem);
@@ -198,8 +198,8 @@ exports.addCart = async (req, res, next) => {
       cartItems.push(cartItem);
       const addCart = await userService.addCart(id, cartItems);
 
-      const updateBook = await bookService.update(
-        cartItem.sach._id,
+      const updateProduct = await productService.update(
+        cartItem.product._id,
         countProduct
       );
 
@@ -211,8 +211,8 @@ exports.addCart = async (req, res, next) => {
       const total = cartItem.dongia * cartItem.soluong + findCart.gia;
       findCart.gia = total;
       // cartItems.push(cartItem)
-      const updateBook = await bookService.update(
-        cartItem.sach._id,
+      const updateProduct = await productService.update(
+        cartItem.product._id,
         countProduct
       );
       const addtoCart = await cartService.updatesoluong(findCart);
@@ -249,10 +249,10 @@ exports.updateCart = async (req, res, next) => {
 
     const cartService = new CartService(MongoDB.client);
     const userService = new UserService(MongoDB.client);
-    const bookService = new BookService(MongoDB.client);
+    const productService = new ProductService(MongoDB.client);
 
     //Check số lượng sản phẩm trong kho
-    const countProduct = await bookService.findById(cart.sach._id);
+    const countProduct = await productService.findById(cart.product._id);
 
     const item = await cartService.findById(cart._id);
 
@@ -268,8 +268,11 @@ exports.updateCart = async (req, res, next) => {
       const updateCart = await cartService.update(cart._id, cart);
       const carts = await cartService.findAllCartUser(user);
 
-      const updateBook = await bookService.update(cart.sach._id, countProduct);
-      // console.log(updateBook)
+      const updateProduct = await productService.update(
+        cart.product._id,
+        countProduct
+      );
+      // console.log(updateProduct)
 
       const newCarts = carts.map(({ user, ...rest }) => rest);
       const clearCart = await userService.deleteAllCart(user);
@@ -290,14 +293,14 @@ exports.deleteCart = async (req, res, next) => {
 
     const cartService = new CartService(MongoDB.client);
     const userService = new UserService(MongoDB.client);
-    const bookService = new BookService(MongoDB.client);
+    const productService = new ProductService(MongoDB.client);
 
     const cart = await cartService.findById(cart_id);
-    const product = await bookService.findById(cart.sach._id);
+    const product = await productService.findById(cart.product._id);
 
     cart.soluong = cart.soluong + product.soluong;
 
-    const countProduct = await bookService.update(cart.sach._id, {
+    const countProduct = await productService.update(cart.product._id, {
       soluong: cart.soluong,
     });
 

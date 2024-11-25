@@ -8,7 +8,7 @@
         <div class="product__form" :class="{'product__form--active': publisher_form }">
             <form action="" @submit.prevent="handleSubmit">
                 <p class="btn btn-outline-danger close" @click="handlePublisher">&times</p>
-                <h3>Nhà xuất bản</h3>
+                <h3>Nhà sản xuất </h3>
                 <div class="product__form__item">
                     <p>Tên:</p>
                     <input required type="text" v-model="ten">
@@ -50,7 +50,7 @@ export default {
                     ten: this.ten,
                     diachi: this.diachi
                 }
-                if(await StaffService.addPublisher(data)) {
+                if(await StaffService.addManufacturer(data)) {
                     this.publisher_form = !this.publisher_form;
                 }
             }
@@ -60,7 +60,7 @@ export default {
                     diachi: this.diachi,
                     _id: this.id
                 }
-                if(await StaffService.updatePublisher(data)) {
+                if(await StaffService.updateManufacturer(data)) {
                     this.publisher_form = !this.publisher_form;
                 }
             }

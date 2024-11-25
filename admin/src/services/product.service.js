@@ -1,7 +1,7 @@
 import createApiClient from "./api.service";
 
 class ProductService {
-  constructor(baseUrl = "/api/book") {
+  constructor(baseUrl = "/api/product") {
     this.api = createApiClient(baseUrl);
   }
   async getAll() {

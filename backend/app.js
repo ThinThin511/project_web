@@ -3,7 +3,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
 const userRouter = require("./app/routes/user.route");
-const bookRouter = require("./app/routes/book.route");
+const productRouter = require("./app/routes/product.route");
 const staffRouter = require("./app/routes/staff.route");
 // const pulisherRouter = require("./app/routes/pulisher.route");
 
@@ -16,7 +16,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to Book Store." });
+  res.json({ message: "Welcome to Store." });
 });
 
 // Xử lý user
@@ -24,7 +24,7 @@ app.use("/api/user", userRouter);
 //  Nhân viên
 app.use("/api/staff", staffRouter);
 //Xử lý sách
-app.use("/api/book", bookRouter);
+app.use("/api/product", productRouter);
 //Xử lý nhà xuất bản
 // app.use("/api/pulisher", pulisherRouter);
 

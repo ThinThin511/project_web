@@ -26,19 +26,19 @@ class StaffService {
     return (await this.api.put("/order", data)).data;
   }
 
-  // Publisher
-  async getAllPublisher() {
-    return (await this.api.get("/publisher")).data;
+  // Manufacturer
+  async getAllManufacturer() {
+    return (await this.api.get("/manufacturer")).data;
   }
-  async addPublisher(data) {
-    return (await this.api.post("/publisher", data)).data;
+  async addManufacturer(data) {
+    return (await this.api.post("/manufacturer", data)).data;
   }
-  async updatePublisher(data) {
+  async updateManufacturer(data) {
     console.log(data);
-    return (await this.api.put("/publisher", data)).data;
+    return (await this.api.put("/manufacturer", data)).data;
   }
-  async deletePublisher(data) {
-    return (await this.api.delete("/publisher/" + data._id)).data;
+  async deleteManufacturer(data) {
+    return (await this.api.delete("/manufacturer/" + data._id)).data;
   }
 }
 export default new StaffService();

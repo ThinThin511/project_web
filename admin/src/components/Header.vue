@@ -1,6 +1,6 @@
 <template>
     <div class="header">
-        <div class="header__left"> Book / {{ this.$route.name }}
+        <div class="header__left"> Gia dụng xanh / {{ this.$route.name }}
             <p>{{ this.$route.name }}</p>
         </div>
         <div class="header__right">

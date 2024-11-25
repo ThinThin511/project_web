@@ -1,26 +1,25 @@
-const BookService = require("../services/book.service");
-const PublisherService = require("../services/publisher.service");
+const ProductService = require("../services/product.service");
+const ManufacturerService = require("../services/manufacturer.service");
 const MongoDB = require("../utils/mongodb.util");
 const ApiError = require("../api-error");
 
 exports.create = async (req, res, next) => {
   try {
-    const bookService = new BookService(MongoDB.client);
-    console.log(req.body);
-    const { ten, dongia, tacgia, mota, soluong, namxuatban, nhaxuatban } =
-      req.body;
+    const productService = new ProductService(MongoDB.client);
+    const { ten, dongia, mota, soluong, nhasanxuat, danhmuc } = req.body;
+
     const newProduct = {
-      ten: ten,
-      dongia: dongia,
-      mota: mota,
-      tacgia: tacgia,
-      soluong: soluong,
-      hinhanh: req.file.filename,
-      namxuatban: namxuatban,
-      nhaxuatban: nhaxuatban,
+      ten,
+      dongia,
+      mota,
+      soluong,
+      nhasanxuat,
+      danhmuc,
+      hinhanh: req.file?.filename || null,
+      ngaytao: new Date(),
     };
-    console.log(newProduct);
-    const document = await bookService.create(newProduct);
+
+    const document = await productService.create(newProduct);
     return res.send(document);
   } catch (error) {
     return next(
@@ -33,53 +32,59 @@ exports.findAll = async (req, res, next) => {
   let documents = [];
 
   try {
-    const bookService = new BookService(MongoDB.client);
+    const productService = new ProductService(MongoDB.client);
     const { q } = req.query;
     if (q) {
-      documents = await bookService.findByQuery(q);
+      documents = await productService.findByQuery(q);
     } else {
-      documents = await bookService.find({});
+      documents = await productService.find({});
     }
   } catch (error) {
-    return next(new ApiError(500, "An error occurred while retrieving book"));
+    return next(
+      new ApiError(500, "Đã có lỗi xảy ra trong quá trình truy vấn sản phẩm")
+    );
   }
   return res.send(documents);
 };
 
-// Find a sigle menu with an id
 exports.findOne = async (req, res, next) => {
   try {
-    const bookService = new BookService(MongoDB.client);
-    const document = await bookService.findById(req.params.id);
+    const productService = new ProductService(MongoDB.client);
+    const document = await productService.findById(req.params.id);
     if (!document) {
-      return next(new ApiError(404, "menu not found"));
+      return next(new ApiError(404, "Sản phẩm không tồn tại"));
     }
     return res.send(document);
   } catch (error) {
     return next(
-      new ApiError(500, `Error retrieving menu with id=${req.params.id}`)
+      new ApiError(
+        500,
+        `Đã xảy ra lỗi khi truy vấn sản phẩm với id=${req.params.id}`
+      )
     );
   }
 };
 
-// Update a menu by the id in the request
 exports.update = async (req, res, next) => {
   if (Object.keys(req.body).length === 0) {
-    return next(new ApiError(400, "Data to update can not be empty"));
+    return next(new ApiError(400, "Dữ liệu cập nhật không được để trống"));
   }
 
   try {
-    const bookService = new BookService(MongoDB.client);
+    const productService = new ProductService(MongoDB.client);
 
-    if (req.file != null) req.body.hinhanh = req.file.filename;
-    const document = await bookService.update(req.params.id, req.body);
+    if (req.file) req.body.hinhanh = req.file.filename;
+    const document = await productService.update(req.params.id, req.body);
     if (!document) {
-      return next(new ApiError(404, "menu not found"));
+      return next(new ApiError(404, "Sản phẩm không tồn tại"));
     }
-    return res.send({ message: "menu was updated successfully" });
+    return res.send({ message: "Sản phẩm đã được cập nhật thành công" });
   } catch (error) {
     return next(
-      new ApiError(500, `Error retrieving menu with id=${req.params.id}`)
+      new ApiError(
+        500,
+        `Đã xảy ra lỗi khi cập nhật sản phẩm với id=${req.params.id}`
+      )
     );
   }
 };
@@ -87,15 +92,15 @@ exports.update = async (req, res, next) => {
 // Delete a menu with the specified id in the request
 exports.delete = async (req, res, next) => {
   try {
-    const bookService = new BookService(MongoDB.client);
-    const document = await bookService.delete(req.params.id);
+    const productService = new ProductService(MongoDB.client);
+    const document = await productService.delete(req.params.id);
     if (!document) {
-      return next(new ApiError(404, "menu not found"));
+      return next(new ApiError(404, "Sản phẩm không tồn tại"));
     }
-    return res.send({ message: "menu was deleted successfully" });
+    return res.send({ message: "Sản phẩm đã được xóa thành công" });
   } catch (error) {
     return next(
-      new ApiError(500, `Could not delete menu with id=${req.params.id}`)
+      new ApiError(500, `Không thể xóa sản phẩm với id=${req.params.id}`)
     );
   }
 };
@@ -256,28 +261,27 @@ exports.deleteAllCategory = async (_req, res, next) => {
 };
 exports.updateQuantity = async (req, res, next) => {
   try {
-    const bookService = new BookService(MongoDB.client);
-    const { bookId, quantity } = req.body; // bookId: id sách, quantity: số lượng sách cần cập nhật
-    console.log(req.body);
-    console.log(bookId);
-    console.log(quantity);
-    // Tìm sách trong kho
-    const book = await bookService.findById(bookId);
-    if (!book) {
-      return next(new ApiError(404, "Book not found"));
+    const productService = new ProductService(MongoDB.client);
+    const { productId, quantity } = req.body;
+
+    // Tìm sản phẩm trong kho
+    const product = await productService.findById(productId);
+    if (!product) {
+      return next(new ApiError(404, "Sản phẩm không tồn tại"));
     }
 
-    // Cập nhật lại số lượng sách trong kho
-    book.soluong += quantity; // Giả sử quantity là số sách được trả lại, có thể là số âm khi trả lại sách.
+    // Cập nhật lại số lượng sản phẩm
+    product.soluong += quantity;
 
-    // Lưu lại sách sau khi cập nhật
-    await bookService.update(bookId, { soluong: book.soluong });
+    // Lưu lại sản phẩm sau khi cập nhật
+    await productService.update(productId, { soluong: product.soluong });
 
-    return res.send({ message: "Book quantity updated successfully" });
+    return res.send({
+      message: "Số lượng sản phẩm đã được cập nhật thành công",
+    });
   } catch (error) {
-    console.log(error);
     return next(
-      new ApiError(500, "An error occurred while updating book quantity")
+      new ApiError(500, "Đã xảy ra lỗi khi cập nhật số lượng sản phẩm")
     );
   }
 };

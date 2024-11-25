@@ -2,7 +2,7 @@ const express = require("express");
 
 const user = require("../controllers/user.controller");
 const staff = require("../controllers/staff.controller");
-const book = require("../controllers/book.controller");
+const product = require("../controllers/product.controller");
 const AuthToken = require("../middleware/AuthToken");
 
 const router = express.Router();
@@ -31,15 +31,15 @@ router
   .get(AuthToken.verifyTokenAdmin, staff.findAllOrder);
 
 router
-  .route("/publisher")
-  .get(AuthToken.verifyTokenAdmin, staff.findAllPublisher)
-  .post(AuthToken.verifyTokenAdmin, staff.addPublisher)
-  .put(AuthToken.verifyTokenAdmin, staff.updatePublisher);
-// .delete(AuthToken.verifyTokenAdmin, staff.deletePublisher)
+  .route("/manufacturer")
+  .get(AuthToken.verifyTokenAdmin, staff.findAllManufacturer)
+  .post(AuthToken.verifyTokenAdmin, staff.addManufacturer)
+  .put(AuthToken.verifyTokenAdmin, staff.updateManufacturer);
+// .delete(AuthToken.verifyTokenAdmin, staff.deleteManufacturer)
 
 router
-  .route("/publisher/:id")
-  .delete(AuthToken.verifyTokenAdmin, staff.deletePublisher);
+  .route("/manufacturer/:id")
+  .delete(AuthToken.verifyTokenAdmin, staff.deleteManufacturer);
 
 // .delete(AuthToken.verifyTokenAdminAdmin, user.delete);
 module.exports = router;

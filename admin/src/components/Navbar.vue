@@ -5,13 +5,13 @@
             <li class="navigation__link__items">
                 <router-link class="navigation__link__items__route" to="/">
                     <i class="ri-dashboard-line"></i> 
-                    <span>Nhà xuất bản</span>
+                    <span>Nhà sản xuất</span>
                 </router-link>
             </li>
             <li class="navigation__link__items">
                 <router-link to="/products" class="navigation__link__items__route">
                     <i class="ri-book-line"></i> 
-                    <span>Sách</span>
+                    <span>Sản phẩm</span>
                 </router-link>
             </li>
             <li class="navigation__link__items">
