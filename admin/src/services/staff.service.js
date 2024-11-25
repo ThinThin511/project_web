@@ -40,5 +40,23 @@ class StaffService {
   async deleteManufacturer(data) {
     return (await this.api.delete("/manufacturer/" + data._id)).data;
   }
+
+  // Category
+  async getAllCategories() {
+    return (await this.api.get("/category")).data;
+  }
+
+  async addCategory(data) {
+    return (await this.api.post("/category", data)).data;
+  }
+
+  async updateCategory(data) {
+    console.log(data);
+    return (await this.api.put("/category", data)).data;
+  }
+
+  async deleteCategory(data) {
+    return (await this.api.delete("/category/" + data._id)).data;
+  }
 }
 export default new StaffService();

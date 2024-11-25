@@ -41,5 +41,15 @@ router
   .route("/manufacturer/:id")
   .delete(AuthToken.verifyTokenAdmin, staff.deleteManufacturer);
 
+router
+  .route("/category")
+  .get(AuthToken.verifyTokenAdmin, staff.findAllCategories)
+  .post(AuthToken.verifyTokenAdmin, staff.addCategory)
+  .put(AuthToken.verifyTokenAdmin, staff.updateCategory);
+
+router
+  .route("/category/:id")
+  .delete(AuthToken.verifyTokenAdmin, staff.deleteCategory);
+
 // .delete(AuthToken.verifyTokenAdminAdmin, user.delete);
 module.exports = router;

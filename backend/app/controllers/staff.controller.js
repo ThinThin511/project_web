@@ -9,6 +9,7 @@ const generateRefreshToken = require("../middleware/generateRefreshToken");
 const OrderService = require("../services/order.service");
 const ProductService = require("../services/product.service");
 const ManufacturerService = require("../services/manufacturer.service");
+const CategoryService = require("../services/category.service");
 require("dotenv").config();
 
 exports.create = async (req, res, next) => {
@@ -422,5 +423,105 @@ exports.deleteManufacturer = async (req, res, next) => {
     return res.send(document);
   } catch (error) {
     return next(new ApiError(500, `Không thể xóa id=${req.params.id}`));
+  }
+};
+// danh muc
+exports.findAllCategories = async (req, res, next) => {
+  try {
+    const categoryService = new CategoryService(MongoDB.client);
+    const allCategories = await categoryService.find();
+    return res.json(allCategories);
+  } catch (error) {
+    return next(new ApiError(500, "Không thể lấy danh sách danh mục!"));
+  }
+};
+
+exports.addCategory = async (req, res, next) => {
+  try {
+    const categoryService = new CategoryService(MongoDB.client);
+    const newCategory = await categoryService.create(req.body);
+    return res.send(newCategory);
+  } catch (error) {
+    console.log(error);
+    return next(new ApiError(500, "Không thể thêm danh mục!"));
+  }
+};
+
+exports.updateCategory = async (req, res, next) => {
+  if (Object.keys(req.body).length === 0) {
+    return next(new ApiError(400, "Dữ liệu cập nhật không được để trống!"));
+  }
+
+  try {
+    const categoryService = new CategoryService(MongoDB.client);
+    const updatedCategory = await categoryService.update(
+      req.body._id,
+      req.body
+    );
+    if (!updatedCategory) {
+      return next(new ApiError(404, "Không tìm thấy danh mục!"));
+    }
+    return res.send(updatedCategory);
+  } catch (error) {
+    console.log(error);
+    return next(
+      new ApiError(500, `Không thể cập nhật danh mục với id=${req.body._id}`)
+    );
+  }
+};
+
+exports.deleteCategory = async (req, res, next) => {
+  try {
+    const categoryService = new CategoryService(MongoDB.client);
+    const deletedCategory = await categoryService.delete(req.params.id);
+    if (!deletedCategory) {
+      return next(new ApiError(404, "Không tìm thấy danh mục!"));
+    }
+    return res.send(deletedCategory);
+  } catch (error) {
+    console.log(error);
+    return next(
+      new ApiError(500, `Không thể xóa danh mục với id=${req.params.id}`)
+    );
+  }
+};
+
+exports.deleteAllCategories = async (req, res, next) => {
+  try {
+    const categoryService = new CategoryService(MongoDB.client);
+    const count = await categoryService.deleteAll();
+    return res.send({ message: `Đã xóa ${count} danh mục!` });
+  } catch (error) {
+    console.log(error);
+    return next(new ApiError(500, "Không thể xóa tất cả danh mục!"));
+  }
+};
+
+exports.findCategoryById = async (req, res, next) => {
+  try {
+    const categoryService = new CategoryService(MongoDB.client);
+    const category = await categoryService.findById(req.params.id);
+    if (!category) {
+      return next(new ApiError(404, "Không tìm thấy danh mục!"));
+    }
+    return res.json(category);
+  } catch (error) {
+    console.log(error);
+    return next(
+      new ApiError(500, `Không thể tìm danh mục với id=${req.params.id}`)
+    );
+  }
+};
+
+exports.findCategoryByQuery = async (req, res, next) => {
+  try {
+    const categoryService = new CategoryService(MongoDB.client);
+    const categories = await categoryService.findByQuery(req.query);
+    return res.json(categories);
+  } catch (error) {
+    console.log(error);
+    return next(
+      new ApiError(500, "Không thể tìm danh mục với truy vấn đã cho!")
+    );
   }
 };

@@ -9,6 +9,12 @@
                 </router-link>
             </li>
             <li class="navigation__link__items">
+                <router-link to="/category" class="navigation__link__items__route">
+                    <i class="ri-book-line"></i> 
+                    <span>Danh mục</span>
+                </router-link>
+            </li>
+            <li class="navigation__link__items">
                 <router-link to="/products" class="navigation__link__items__route">
                     <i class="ri-book-line"></i> 
                     <span>Sản phẩm</span>
