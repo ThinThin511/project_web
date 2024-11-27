@@ -6,7 +6,10 @@
             </div>
         </div>
         <div class="products__product col-lg-10 col-md-9 col-12">
-            <Filter @sort="sort" @range="range" />
+            <Filter :min="priceRange.min" 
+            :max="priceRange.max" 
+            @sort="sort" 
+            @range="range" />
             <div class="products__product__list" v-if="products.length > 0">
                 <div class="products__product__item col-lg-2 col-3" v-for="item in products" :key="item._id">
                     <router-link :to="{ path: '/product/' + item._id}" class="products__product__item__image">
@@ -45,8 +48,8 @@ export default {
             this.getData();
         },
     },
-    mounted() {
-        this.getData();
+    async mounted() {
+        await this.getData();
     },
     computed: {
         productStrings() {
@@ -67,16 +70,21 @@ export default {
             products: [],
             message: '',
             query: '',
+            priceRange: {
+                min: 0, // Giá thấp nhất ban đầu
+                max: 1000000, // Giá cao nhất ban đầu
+            },
         }
     },
     methods: {
         async getData() {
-            this.products = await ProductsService.getAll();
-            this.products = this.products.filter(item => item.deleted === 0); // Giữ lại các sản phẩm chưa bị xóa
-            
-            if (this.query !== '') {
-                this.products = this.filteredProducts;
-            }
+            const allProducts = await ProductsService.getAll();
+            this.products = allProducts.filter(item => item.deleted === 0);
+
+            // Tìm giá thấp nhất và cao nhất
+            const prices = this.products.map(item => item.dongia);
+            this.priceRange.min = Math.min(...prices);
+            this.priceRange.max = Math.max(...prices);
         },
         async addToCart(data) {
             if (!useUserStore().login) {
@@ -102,13 +110,19 @@ export default {
             } else if (data === 'desc') {
                 this.products = this.products.sort((a, b) => b.dongia - a.dongia);
             } else {
-                this.products = await ProductsService.getAll();
+                const allProducts = await ProductsService.getAll();
+                this.products = allProducts.filter(item => item.deleted === 0);
             }
         },
         async range(data) {
-            this.products = await ProductsService.getAll();
-            this.products = this.products.filter((item) => parseInt(item.dongia) < parseInt(data));
-        }
+        const { minPrice, maxPrice } = data;
+        const allProducts = await ProductsService.getAll(); // Lấy tất cả sản phẩm
+        this.products = allProducts.filter(item => 
+            parseInt(item.dongia) >= parseInt(minPrice) && 
+            parseInt(item.dongia) <= parseInt(maxPrice) &&
+            item.deleted === 0
+        );
+    }
     }
 }
 </script>

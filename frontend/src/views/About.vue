@@ -2,8 +2,21 @@
     <div class="about">
         <div class="about__inside">
             <h1>Giới thiệu</h1>
-            <p style="text-align: justify;">Sách quốc văn với nhiều thể loại đa dạng như sách giáo khoa - tham khảo, giáo trình, sách học ngữ, từ điển, sách tham khảo thuộc nhiều chuyên ngành phong phú: văn học, tâm lý – giáo dục, khoa học kỹ thuật, khoa học kinh tế - xã hội, khoa học thường thức, sách phong thủy, nghệ thuật sống, danh ngôn, sách thiếu nhi, truyện tranh, truyện đọc, từ điển, công nghệ thông tin, khoa học – kỹ thuật, nấu ăn, làm đẹp...  của nhiều Nhà xuất bản, nhà cung cấp sách có uy tín như: NXB Trẻ, Giáo Dục, Kim Đồng, Văn hóa -Văn Nghệ, Tổng hợp TP.HCM, Chính Trị Quốc Gia; Công ty Đông A, Nhã Nam, Bách Việt, Alphabook, Thái Hà, Minh Lâm, Đinh Tị, Minh Long, TGM, Sáng Tạo Trí Việt, Khang Việt, Toàn Phúc…</p>
-            <p style="text-align: justify;">Gồm Phân xưởng in và Phân xưởng thành phẩm: với nhiều máy in hiện đại của Đức và Nhật: Heidelberg, Komori, Akiyama, Lithrone, Mitsubishi… cùng nhiều máy móc, thiết bị khác như: máy cắt, máy vô bìa sách, máy bế hộp…  Đội ngũ công nhân tay nghề cao, đã cho ra những sản phẩm có chất lượng tốt, nhờ đó, sản xuất theo đúng nhu cầu - thị hiếu của khách hàng và hình thành được quy trình in & phát hành.</p>
+            <p style="text-align: justify;">
+                Gia Dụng Xanh chuyên cung cấp các sản phẩm đồ gia dụng chất lượng cao với giá cả hợp lý. Từ các thiết bị nhà bếp, đồ dùng phòng tắm, đồ trang trí nội thất cho đến các sản phẩm bảo vệ sức khỏe, chúng tôi cam kết mang đến cho khách hàng những sản phẩm tiện ích, thân thiện với môi trường.
+            </p>
+            <p style="text-align: justify;">
+                Với phương châm “Sản phẩm chất lượng, giá trị bền lâu”, Gia Dụng Xanh luôn cập nhật những xu hướng mới trong ngành đồ gia dụng để đáp ứng nhu cầu đa dạng của khách hàng. Chúng tôi nhập khẩu các sản phẩm từ những thương hiệu nổi tiếng trong và ngoài nước, đảm bảo tính năng vượt trội và độ bền cao.
+            </p>
+            <p style="text-align: justify;">
+                Gia Dụng Xanh không chỉ bán các sản phẩm mà còn mang đến những giải pháp tối ưu cho không gian sống của bạn. Chúng tôi tự hào là điểm đến đáng tin cậy cho các gia đình trong việc chọn lựa những món đồ nội thất tiện ích và an toàn.
+            </p>
+            <p style="text-align: justify;">
+                Các sản phẩm của chúng tôi bao gồm: dụng cụ nhà bếp, đồ dùng vệ sinh, sản phẩm trang trí, đèn chiếu sáng, thiết bị điện tử, các vật dụng chăm sóc sức khỏe, và nhiều sản phẩm khác. Đặc biệt, chúng tôi chú trọng vào việc phát triển các sản phẩm thân thiện với môi trường, tiết kiệm năng lượng và giúp bảo vệ sức khỏe người tiêu dùng.
+            </p>
+            <p style="text-align: justify;">
+                Hãy đến với Gia Dụng Xanh để tìm cho ngôi nhà của bạn những sản phẩm chất lượng, tiện dụng và thân thiện với môi trường. Chúng tôi cam kết mang đến sự hài lòng tuyệt đối cho khách hàng!
+            </p>
         </div>
     </div>
 </template>
@@ -17,7 +30,7 @@ export default {
 <style>
 .about {
     color: #000;
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../assets/home_about.jpg");
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../assets/about.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;

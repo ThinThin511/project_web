@@ -19,7 +19,7 @@
         <div class="header__menu col-md-10 col-sm-5 row" :class="{ 'header__menu--active': showNav}">
             <div class="header__navbar col-md-6">
                 <router-link to="/" class="header__navbar__link">Trang chủ</router-link>
-                <router-link to="/product" class="header__navbar__link">Sách</router-link>
+                <router-link to="/product" class="header__navbar__link">Sản phẩm</router-link>
                 <router-link to="/about" class="header__navbar__link">Giới thiệu</router-link>
             </div>
                 
@@ -106,7 +106,9 @@ export default {
     margin: 20px auto; /* Căn giữa */
     width: 100px; /* Điều chỉnh kích thước */
     height: auto;
-    border-radius: 50pt;
+    border-radius: 50%;
+    border: 1px solid; /* Kích thước viền, kiểu viền, cần thiết để màu viền có hiệu lực */
+  border-color: #27ae60;
 }
 /* .header__logo__title {
     font-family: "Satisfy", cursive;

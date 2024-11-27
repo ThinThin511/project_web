@@ -1,110 +1,131 @@
 <template>
     <footer>
-        <div class="footer">
-            <div class="footer-left">
-                <p>&copy; 2024 - Thư Viện</p>
-                <p class="footer-description">Chuyên cung cấp dịch vụ mượn sách và các tài liệu học tập chất lượng</p>
+        <div class="footer__top">
+            <div class="footer__left">
+                <h2>Gia Dụng Xanh</h2>
+                <p>Bản quyền © 2024 Gia Dụng Xanh. Tất cả các quyền được bảo vệ.</p>
+                <p>Công ty TNHH Gia Dụng Xanh</p>
+                <p>Địa chỉ: 123 Đường ABC, Phường 1, Quận 1, TP. Hồ Chí Minh, Việt Nam</p>
+                <p>Giấy phép số: 123456789 do Sở KH&ĐT TP.HCM cấp ngày 01/01/2024</p>
             </div>
-            <div class="footer-links">
+            <div class="footer__middle">
+                <h3>Về Gia Dụng Xanh</h3>
                 <ul>
-                    <li>Địa chỉ: Thành phố Cần Thơ, Việt Nam</li>
-                    <li>Email: phamvocongthien@project.com</li>
-                    <li>Số điện thoại: 0783 736 507</li>
+                    <li><a href="#">Giới thiệu</a></li>
+                    <li><a href="#">Sản phẩm</a></li>
+                    <li><a href="#">Chính sách bảo mật</a></li>
+                    <li><a href="#">Chính sách đổi trả</a></li>
                 </ul>
             </div>
-            <div class="footer-social">
+            <div class="footer__right">
+                <h3>Cửa hàng</h3>
                 <ul>
-                    <li><a href="#" target="_blank">Facebook</a></li>
-                    <li><a href="#" target="_blank">Instagram</a></li>
-                    <li><a href="#" target="_blank">Twitter</a></li>
+                    <li><a href="#">Chính sách bán hàng</a></li>
+                    <li><a href="#">Chính sách giao hàng</a></li>
+                    <li><a href="#">Chính sách trả hàng, hoàn tiền</a></li>
+                    <li><a href="#">Chính sách bảo hành</a></li>
                 </ul>
+            </div>
+            <div class="footer__icons">
+                <h3>Liên kết</h3>
+                
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-tiktok"></i></a>
             </div>
         </div>
     </footer>
 </template>
 
-<style>
-.footer {
-    background-color: #f4f4f4; /* Nền sáng nhạt hơn */
-    color: #333; /* Chữ màu tối dễ đọc */
-    padding: 40px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 8px; /* Đổ bóng nhẹ */
+<style scoped>
+footer {
+    background-color: #f8f8f8;
+    padding: 20px;
+    font-size: 14px;
+    color: #333;
 }
 
-.footer-left {
+.footer__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Đảm bảo các phần tử căn lên trên cùng */
+    flex-wrap: wrap; /* Cho phép các phần tử chuyển dòng khi cần */
+}
+
+.footer__left, .footer__middle, .footer__right, .footer__icons {
     flex: 1;
-    max-width: 300px;
     margin-right: 20px;
 }
 
-.footer-description {
-    font-size: 0.9rem;
-    color: #666; /* Màu chữ nhạt hơn cho phần mô tả */
-    margin-top: 10px;
+.footer__left h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2a9d8f;
 }
 
-.footer-links, .footer-social {
-    flex: 1;
-    max-width: 250px;
+.footer__middle h3, .footer__right h3, .footer__icons h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #264653;
 }
 
-.footer-links ul, .footer-social ul {
-    list-style: none;
+.footer__middle ul, .footer__right ul {
+    list-style-type: none;
     padding: 0;
 }
 
-.footer-links li, .footer-social li {
-    margin-bottom: 10px;
+.footer__middle li, .footer__right li {
+    margin-bottom: 8px;
 }
 
-.footer-links li a, .footer-social li a {
-    color: #333; /* Màu chữ tối dễ đọc */
+.footer__middle a, .footer__right a {
     text-decoration: none;
-    font-size: 1rem;
-    transition: color 0.3s ease;
+    color: #264653;
+    font-size: 14px;
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
-.footer-links li a:hover, .footer-social li a:hover {
-    color: #2ecc71; /* Màu xanh lá khi hover */
+.footer__middle a:hover, .footer__right a:hover {
+    color: #e76f51;
+    transform: translateX(5px);
 }
 
-.footer-social ul {
-    display: flex;
-    justify-content: space-around;
-    padding-left: 0;
+.footer__icons {
+    
+    gap: 10px;
+    justify-content: flex-start;
 }
 
-.footer-social li {
-    list-style-type: none;
+.footer__icons a {
+    font-size: 24px;
+    color: #333;
+    transition: color 0.3s ease, transform 0.3s ease;
+    margin-left: 6pt;
 }
 
-.footer-social li a {
-    font-size: 1.2rem;
+.footer__icons a:hover {
+    color: #2a9d8f;
+    transform: scale(1.1); /* Hiệu ứng phóng to khi hover */
 }
 
-.footer p {
-    font-size: 1rem;
-    margin: 0;
+footer input[type="email"] {
+    padding: 8px;
+    font-size: 14px;
+    margin-right: 10px;
+    width: 200px;
 }
 
-@media (max-width: 768px) {
-    .footer {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .footer-left, .footer-links, .footer-social {
-        max-width: 100%;
-        margin-bottom: 20px;
-    }
-
-    .footer-social ul {
-        justify-content: center;
-    }
+footer button {
+    padding: 8px 16px;
+    font-size: 14px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
+footer button:hover {
+    background-color: #0056b3;
+}
 </style>

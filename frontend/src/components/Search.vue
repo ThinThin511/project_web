@@ -1,9 +1,9 @@
 <template>
-    <div @keyup.enter="searchBook" class="header__function__search col-sm-5">
+    <div @keyup.enter="searchProduct" class="header__function__search col-sm-5">
         <button>
             <i class="fa-solid fa-magnifying-glass"></i>
         </button>
-        <input type="text" class="search__input" placeholder="Tìm kiếm" v-model="search" @keyup="searchBook">
+        <input type="text" class="search__input" placeholder="Tìm kiếm" v-model="search" @keyup="searchProduct">
         <span v-if="search" @click="this.search = ''">x</span>
         <div class="search__response" v-if="this.search">
             <p v-for="item in filteredProducts" :key="item">
@@ -18,25 +18,25 @@ import ProductService from '@/services/book.service';
 import router from '@/router';
 export default {
     async mounted() {
-        this.book = await ProductService.getAll();
+        this.product = await ProductService.getAll();
     },
     computed: {
         productStrings() {
-            return this.book.map((product) => {
-                const { ten, tacgia, mota, nhaxuatban } = product;
-                return [ten, tacgia, mota, nhaxuatban].join(" ").toUpperCase();
+            return this.product.map((product) => {
+                const { ten, danhmuc, mota, nhasanxuat } = product;
+                return [ten, danhmuc, mota, nhasanxuat].join(" ").toUpperCase();
             });
         },
         filteredProducts() {
-            if (!this.search) return this.book;
-            return this.book.filter((_book, index) =>
+            if (!this.search) return this.product;
+            return this.product.filter((_product, index) =>
                     this.productStrings[index].includes(this.search.toUpperCase())
             // Đoạn mã xử lý đầy đủ sẽ trình bày bên dưới
             );
         },
     },
     methods: {
-        searchBook(event) {
+        searchProduct(event) {
             if(event.key === 'Enter')
                 router.push('/product?search='+this.search)
             // if(this.search == '')
@@ -44,7 +44,7 @@ export default {
     },
     data() {
         return {
-            book: [],
+            product: [],
             search_res: '', 
             search: '',
         }
