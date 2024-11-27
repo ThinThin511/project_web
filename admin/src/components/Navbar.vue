@@ -23,7 +23,7 @@
             <li class="navigation__link__items">
                 <router-link class="navigation__link__items__route" to="/orders">
                     <i class="ri-bill-line"></i> 
-                    <span>Phiếu theo dõi</span>
+                    <span>Đơn hàng</span>
                 </router-link>
             </li>
             <li class="navigation__link__items" @click="userStore.logout()">
@@ -81,6 +81,9 @@ export default {
     margin: 20px auto; /* Căn giữa */
     width: 100px; /* Điều chỉnh kích thước */
     height: auto;
+    border-radius: 50%;
+    border: 1px solid; /* Kích thước viền, kiểu viền, cần thiết để màu viền có hiệu lực */
+  border-color: #27ae60;
 }
 
 .navigation__link {

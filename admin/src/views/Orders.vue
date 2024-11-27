@@ -6,13 +6,13 @@
         <div class="order__form" :class="{'order__form--active': order_form }">
             <form action="" @submit.prevent="handleSubmit">
                 <p class="btn btn-outline-danger close" @click="handleOrder">&times</p>
-                <h3>Chỉnh sửa phiếu theo dõi</h3>
+                <h3>Chi tiết đơn hàng</h3>
                 <div class="order__form__item">
                     <p>Mã phiếu:</p>
                     <span>{{ order._id }}</span>
                 </div>
                 <div class="order__form__item">
-                    <p>Đọc giả:</p>
+                    <p>Tên khách hàng:</p>
                     <span>{{ user.ho + ' ' + user.ten }}</span>
                 </div>
                 <div class="order__form__item">
@@ -31,11 +31,11 @@
                     <p>Tổng tiền:</p>
                     <span>{{ order.tongtien }}VNĐ</span>
                 </div>
-                <!-- <div class="order__form__item">
-                    <p>Ngày mượn:</p>
-                    <span>{{ order.ngaymuon }}</span>
-                </div>
                 <div class="order__form__item">
+                    <p>Ngày đặt hàng:</p>
+                    <span>{{ order.ngaydathang }}</span>
+                </div>
+                <!-- <div class="order__form__item">
                     <p>Ngày trả:</p>
                     <span>{{ order.ngaytra }}</span>
                     <input v-if="order.trangthai != 'Đã trả'" type="date" v-model="ngaytra" @change="handlePhuthu">
@@ -50,7 +50,7 @@
                         <option value="Đã duyệt">Đã duyệt</option>
                         <option value="Đang giao hàng">Đang giao hàng</option>
                         <option value="Đã hủy">Đã hủy</option>
-                        <option value="Quá giao hàng">Đã giao hàng</option>
+                        <option value="Đã giao hàng">Đã giao hàng</option>
                     </select>
                 </div>
                 <!-- <div class="order__form__item">
@@ -162,8 +162,8 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #A7D8A5; /* Màu xanh lá nhạt cho header */
-    padding: 10px;
+    /* background-color: #A7D8A5; 
+    padding: 10px; */
 }
 
 .order__header input {

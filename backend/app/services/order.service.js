@@ -12,6 +12,7 @@ class OrderService {
       trangthai: payload.trangthai,
       note: payload.note,
       method_payment: payload.method_payment,
+      ngaydathang: payload.ngaydathang,
     };
     // Remove undefined fields
     Object.keys(order).forEach((key) => {
@@ -25,8 +26,19 @@ class OrderService {
       order,
       {
         $set: {
-          trangthai: "Đã đăng ký",
-          // ngaymuon: new Date().getDate()+'/'+ (new Date().getMonth()+1)+'/'+new Date().getFullYear() + ' ' + new Date().getHours() +':' + new Date().getMinutes() + ':' + new Date().getSeconds(),
+          trangthai: "Đang chờ xác nhận",
+          ngaydathang:
+            String(new Date().getDate()).padStart(2, "0") +
+            "/" +
+            String(new Date().getMonth() + 1).padStart(2, "0") +
+            "/" +
+            new Date().getFullYear() +
+            " " +
+            String(new Date().getHours()).padStart(2, "0") +
+            ":" +
+            String(new Date().getMinutes()).padStart(2, "0") +
+            ":" +
+            String(new Date().getSeconds()).padStart(2, "0"),
         },
       },
       { returnDocument: "after", upsert: true }

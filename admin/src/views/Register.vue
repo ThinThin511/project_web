@@ -106,6 +106,7 @@ export default {
     text-align: center;
     width: 100vw;
     color: #000000;
+    background-color: #ffffff; 
 }
 .login__header {
     display: flex;
@@ -120,6 +121,9 @@ export default {
     height: 100px; /* Kích thước của logo */
     width: auto;
     margin-right: 10px; /* Khoảng cách giữa logo và chữ */
+    border-radius: 50%;
+    border: 1px solid; /* Kích thước viền, kiểu viền, cần thiết để màu viền có hiệu lực */
+  border-color: #27ae60;
 }
 
 .login__title {
@@ -156,7 +160,7 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: #f1f9f1; /* Màu nền sáng nhạt, gần với màu trắng */
+    background-color: #ffffff; /* Màu nền sáng nhạt, gần với màu trắng */
 }
 
 .login .form form {
@@ -165,6 +169,8 @@ export default {
     padding: 20px 20px;
     width: fit-content;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 8px; /* Thêm bóng nhẹ */
+    border: 1px solid; /* Kích thước viền, kiểu viền, cần thiết để màu viền có hiệu lực */
+  border-color: #27ae60;
 }
 
 .login__info__item {

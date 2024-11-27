@@ -8,15 +8,18 @@
         <div class="table__title row" >
             <div class="table__title__item col-sm-1">STT</div>
             <div class="table__title__item col-sm-1">HÌNH ẢNH</div>
-            <div class="table__title__item col-sm-2">
-                TÊN
-            </div>
-            <div class="table__title__item col-sm-1">GIÁ
-                
-            </div>
-            <div class="table__title__item col-sm-1">SỐ LƯỢNG
-
-            </div>
+            <div class="table__title__item col-sm-2" @click="sortTable('ten')">
+        TÊN
+        <i v-if="sortKey === 'ten'" :class="sortOrder === 'asc' ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
+    </div>
+    <div class="table__title__item col-sm-1" @click="sortTable('dongia')">
+        GIÁ
+        <i v-if="sortKey === 'dongia'" :class="sortOrder === 'asc' ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
+    </div>
+    <div class="table__title__item col-sm-1" @click="sortTable('soluong')">
+        SỐ LƯỢNG
+        <i v-if="sortKey === 'soluong'" :class="sortOrder === 'asc' ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
+    </div>
             <div class="table__title__item col-sm-2">NHÀ SẢN XUẤT
                 
             </div>
@@ -85,7 +88,40 @@ export default {
             if(this.search != '') {
                 this.list = this.filteredProducts;
             }
+            if (this.sortKey) {
+            this.sortTable(this.sortKey, false);
+        }
         },
+        sortTable(key, toggleOrder = true) {
+        // Nếu cột khác, luôn đặt thứ tự ban đầu là 'asc'
+        if (this.sortKey !== key) {
+            this.sortOrder = 'asc';
+        } else if (toggleOrder) {
+            // Đổi thứ tự nếu click lại
+            this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+        }
+
+        this.sortKey = key;
+
+        // Thực hiện sắp xếp
+        this.list.sort((a, b) => {
+            let valA = a[key];
+            let valB = b[key];
+
+            // Kiểm tra nếu là số
+            if (!isNaN(valA) && !isNaN(valB)) {
+                valA = parseFloat(valA);
+                valB = parseFloat(valB);
+            }
+
+            // Sắp xếp tăng dần hoặc giảm dần
+            if (this.sortOrder === 'asc') {
+                return valA > valB ? 1 : valA < valB ? -1 : 0;
+            } else {
+                return valA < valB ? 1 : valA > valB ? -1 : 0;
+            }
+        });
+    },
         handleSort(item) {
             if(item == 'name') {
                 this.sort_name = !this.sort_name;
@@ -107,8 +143,8 @@ export default {
             this.$emit('edit', product);
         },
         confirmDelete(product) {
-            if (window.confirm('Are you sure you want to delete this product?')) {
-                this.deleteProduct(product);
+            if (window.confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
+                ProductService.deleteProduct(product);
             }
         },
         async handleDelete(product) {
@@ -125,6 +161,10 @@ export default {
             sort_quantity: false,
             search: '',
             query: '',
+            
+        
+        sortKey: '', // Cột hiện đang được sắp xếp
+        sortOrder: 'asc', // Hướng sắp xếp: 'asc' hoặc 'desc'
         }
     }
 }
@@ -142,6 +182,12 @@ export default {
     text-align: center;
     margin-top: 40px;
     margin-right: 10px;
+}
+.ri-arrow-up-s-line, .ri-arrow-down-s-line {
+    font-size: 0.9rem;
+    margin-left: 5px;
+    color: #2d6a4f; /* Xanh lá đậm */
+    cursor: pointer;
 }
 
 /* Tên bảng */

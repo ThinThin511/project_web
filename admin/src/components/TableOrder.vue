@@ -11,17 +11,29 @@
             <div class="table__title__item col-sm-2">
                 TÊN KHÁCH HÀNG
             </div>
-            <div class="table__title__item col-sm-1">TỔNG TIỀN
-               
-            </div>
+            <div class="table__title__item col-sm-1" @click="handleSort('tongtien')">
+    TỔNG TIỀN
+    <span v-if="sortColumn === 'tongtien'">
+        <i v-if="sortDirection === 'asc'" class="ri-arrow-up-s-line"></i>
+        <i v-else class="ri-arrow-down-s-line"></i>
+    </span>
+</div>
             
-            <div class="table__title__item col-sm-2">TRẠNG THÁI</div>
+            
             <div class="table__title__item col-sm-2">GHI CHÚ
                
             </div>
-            <div class="table__title__item col-sm-3">ĐỊA CHỈ
+            <div class="table__title__item col-sm-2">ĐỊA CHỈ
                
             </div>
+            <div class="table__title__item col-sm-1" @click="handleSort('ngaydathang')">
+    NGÀY ĐẶT HÀNG
+    <span v-if="sortColumn === 'ngaydathang'">
+        <i v-if="sortDirection === 'asc'" class="ri-arrow-up-s-line"></i>
+        <i v-else class="ri-arrow-down-s-line"></i>
+    </span>
+</div>
+            <div class="table__title__item col-sm-2">TRẠNG THÁI</div>
             <div class="table__title__item col-sm-1"></div>
 
         </div>
@@ -31,19 +43,27 @@
             <div class="table__list__item col-sm-2">
                 {{ item.user.ho+' '+item.user.ten }}
             </div>
-            <div class="table__list__item col-sm-1">{{ item.tongtien }}</div>
+            <div class="table__list__item col-sm-1 fw-bold">{{ item.tongtien }}</div>
             
-            <div v-if="item.trangthai == 'Đã trả'" class="table__list__item col-sm-2 text-success">
-                {{ item.trangthai }}
-            </div>
-            <div v-else-if="item.trangthai == 'Quá hạn'" class="table__list__item col-sm-2 text-danger">
-                {{ item.trangthai }}
-            </div>
-            <div v-else class="table__list__item col-sm-2 text-primary">
-                {{ item.trangthai }}
-            </div>
+            
             <div class="table__list__item col-sm-2">{{ item.note }}</div>
-            <div class="table__list__item col-sm-3">{{ item.user.diachi }}</div>
+            <div class="table__list__item col-sm-2">{{ item.user.diachi }}</div>
+            <div class="table__list__item col-sm-1">{{ item.ngaydathang }}</div>
+            <div v-if="item.trangthai == 'Đã giao hàng'" class="table__list__item col-sm-2 text-success fw-bold">
+                {{ item.trangthai }}
+            </div>
+            <div v-else-if="item.trangthai == 'Đã hủy'" class="table__list__item col-sm-2 text-danger fw-bold">
+                {{ item.trangthai }}
+            </div>
+            <div v-else-if="item.trangthai == 'Đã duyệt'" class="table__list__item col-sm-2 text-warning fw-bold">
+                {{ item.trangthai }}
+            </div>
+            <div v-else-if="item.trangthai == 'Đang chờ xác nhận'" class="table__list__item col-sm-2 text-secondary fw-bold">
+                {{ item.trangthai }}
+            </div>
+            <div v-else class="table__list__item col-sm-2 text-primary fw-bold">
+                {{ item.trangthai }}
+            </div>
             <div class="table__list__item col-sm-1">
                 <i class="ri-pencil-line" @click="handleEmit(item)"></i>
             </div>
@@ -86,15 +106,68 @@ export default {
             if(this.search != '') {
                 this.list = this.filteredProducts;
             }
+            this.sortData();
         },
         handleEmit(product) {
             this.$emit('edit', product);
         },
+        handleSort(column) {
+        if (this.sortColumn === column) {
+            // Nếu cột giống nhau, đảo ngược thứ tự
+            this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            // Nếu đổi cột, thiết lập thứ tự mặc định là tăng dần
+            this.sortColumn = column;
+            this.sortDirection = 'asc';
+        }
+        this.sortData(); // Gọi hàm sắp xếp
+    },
+    convertStringToDate(dateString) {
+    if (!dateString || typeof dateString !== 'string') {
+        // Trả về ngày mặc định nếu giá trị không hợp lệ
+        return new Date(0); // Hoặc Date.now() nếu cần ngày hiện tại
+    }
+
+    try {
+        // Chuỗi dạng "27/11/2024 20:34:31"
+        const [datePart, timePart] = dateString.split(' '); // Tách ngày và giờ
+        const [day, month, year] = datePart.split('/'); // Tách ngày, tháng, năm
+
+        return new Date(`${year}-${month}-${day}T${timePart || '00:00:00'}`); // Tạo đối tượng Date
+    } catch (error) {
+        console.error('Invalid date format:', dateString);
+        return new Date(0); // Trả về ngày mặc định nếu gặp lỗi
+    }
+},
+    sortData() {
+        if (this.sortColumn) {
+            this.list.sort((a, b) => {
+                let valA = a[this.sortColumn];
+                let valB = b[this.sortColumn];
+
+                // Chuyển đổi giá trị nếu là ngày tháng
+                if (this.sortColumn === 'ngaydathang') {
+            valA = this.convertStringToDate(valA);
+            valB = this.convertStringToDate(valB);
+        } else if (this.sortColumn === 'tongtien') {
+            // Đảm bảo tổng tiền được chuyển thành số trước khi so sánh
+            valA = parseFloat(valA) || 0;
+            valB = parseFloat(valB) || 0;
+        }
+
+                if (valA < valB) return this.sortDirection === 'asc' ? -1 : 1;
+                if (valA > valB) return this.sortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+    },
     },
     data() {
         return {
             list: [],
-            search: ''
+            search: '',
+            sortColumn: '', // Cột đang được sắp xếp
+        sortDirection: 'asc',
         }
     }
 }
