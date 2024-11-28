@@ -525,3 +525,67 @@ exports.findCategoryByQuery = async (req, res, next) => {
     );
   }
 };
+exports.getStatistics = async (req, res) => {
+  const orderService = new OrderService(MongoDB.client);
+  try {
+    // Doanh thu theo ngày
+    const revenueByTime = await orderService.aggregate([
+      {
+        $addFields: {
+          ngaydathang_date: {
+            $dateFromString: {
+              dateString: "$ngaydathang",
+              format: "%d/%m/%Y %H:%M:%S", // Định dạng chuỗi ngày hiện tại
+            },
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$ngaydathang_date" },
+          },
+          revenue: { $sum: "$tongtien" },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+    console.log(revenueByTime);
+
+    // Mặt hàng bán chạy
+    const bestSellingProducts = await orderService.aggregate([
+      { $unwind: "$product" },
+      {
+        $group: {
+          _id: "$product.product._id",
+          productName: { $first: "$product.product.ten" },
+          quantitySold: { $sum: "$product.soluong" },
+          revenue: {
+            $sum: { $multiply: ["$product.gia", "$product.soluong"] },
+          },
+        },
+      },
+      { $sort: { revenue: -1 } },
+      { $limit: 5 },
+    ]);
+
+    res.json({
+      revenueByTime: revenueByTime.map((r) => ({
+        time: r._id,
+        revenue: r.revenue,
+      })),
+      bestSellingProducts: bestSellingProducts.map((p) => ({
+        product: p._id,
+        name: p.productName,
+        quantitySold: p.quantitySold,
+        revenue: p.revenue,
+      })),
+    });
+  } catch (error) {
+    console.error("Lỗi khi lấy dữ liệu thống kê: ", error); // Log lỗi chi tiết
+    res.status(500).json({
+      message: "Lỗi khi lấy dữ liệu thống kê",
+      error: error.message || error,
+    });
+  }
+};

@@ -8,6 +8,7 @@ import NotFound from "@/views/NotFound.vue";
 import Customers from "@/views/Customers.vue";
 import { useUserStore } from "@/stores/userStore";
 import Category from "@/views/Category.vue";
+import Overview from "@/views/Overview.vue";
 
 const routes = [
   {
@@ -87,6 +88,27 @@ const routes = [
     path: "/orders",
     name: "Đơn hàng",
     component: Orders,
+    beforeEnter: (to, from, next) => {
+      // Kiểm tra xem userStore có tồn tại không
+      if (!useUserStore().login) {
+        // Hiển thị thông báo yêu cầu đăng nhập
+        const confirmed = confirm("Bạn cần đăng nhập");
+        if (confirmed) {
+          // Chuyển hướng đến trang đăng nhập
+          next("/login"); // Thay đổi '/login' thành địa chỉ của trang đăng nhập của bạn
+        } else {
+          next("/404");
+        }
+      } else {
+        // Nếu userStore tồn tại, cho phép điều hướng đến trang giỏ hàng
+        next();
+      }
+    },
+  },
+  {
+    path: "/overview",
+    name: "Thống kê",
+    component: Overview,
     beforeEnter: (to, from, next) => {
       // Kiểm tra xem userStore có tồn tại không
       if (!useUserStore().login) {

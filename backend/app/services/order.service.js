@@ -93,6 +93,9 @@ class OrderService {
     const result = await this.Order.deleteMany({});
     return result.deletedCount;
   }
+  async aggregate(pipeline) {
+    return this.Order.aggregate(pipeline).toArray(); // Đảm bảo sử dụng `this.Order`
+  }
 }
 
 module.exports = OrderService;

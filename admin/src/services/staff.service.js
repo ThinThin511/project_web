@@ -25,6 +25,10 @@ class StaffService {
   async updateOrder(data) {
     return (await this.api.put("/order", data)).data;
   }
+  async getStatistics() {
+    const response = await axios.get("/statistics");
+    return response.data; // { revenueByTime, bestSellingProducts }
+  }
 
   // Manufacturer
   async getAllManufacturer() {

@@ -51,5 +51,7 @@ router
   .route("/category/:id")
   .delete(AuthToken.verifyTokenAdmin, staff.deleteCategory);
 
+router.route("/statistics").get(staff.getStatistics);
+
 // .delete(AuthToken.verifyTokenAdminAdmin, user.delete);
 module.exports = router;
