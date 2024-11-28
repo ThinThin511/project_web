@@ -526,9 +526,25 @@ exports.findCategoryByQuery = async (req, res, next) => {
   }
 };
 exports.getStatistics = async (req, res) => {
+  const { timePeriod } = req.query; // Lấy tham số thời gian từ query string
   const orderService = new OrderService(MongoDB.client);
   try {
-    // Doanh thu theo ngày
+    // Định nghĩa định dạng ngày tháng năm tùy theo 'timePeriod'
+    let dateFormat;
+    switch (timePeriod) {
+      case "month":
+        dateFormat = "%Y-%m"; // Thống kê theo tháng
+        break;
+      case "year":
+        dateFormat = "%Y"; // Thống kê theo năm
+        break;
+      case "day":
+      default:
+        dateFormat = "%Y-%m-%d"; // Thống kê theo ngày
+        break;
+    }
+
+    // Doanh thu theo thời gian (ngày/tháng/năm)
     const revenueByTime = await orderService.aggregate([
       {
         $addFields: {
@@ -543,14 +559,13 @@ exports.getStatistics = async (req, res) => {
       {
         $group: {
           _id: {
-            $dateToString: { format: "%Y-%m-%d", date: "$ngaydathang_date" },
+            $dateToString: { format: dateFormat, date: "$ngaydathang_date" }, // Sử dụng dateFormat để nhóm theo ngày, tháng, hoặc năm
           },
-          revenue: { $sum: "$tongtien" },
+          revenue: { $sum: "$tongtien" }, // Tổng doanh thu
         },
       },
       { $sort: { _id: 1 } },
     ]);
-    console.log(revenueByTime);
 
     // Mặt hàng bán chạy
     const bestSellingProducts = await orderService.aggregate([
@@ -569,6 +584,7 @@ exports.getStatistics = async (req, res) => {
       { $limit: 5 },
     ]);
 
+    // Trả về kết quả
     res.json({
       revenueByTime: revenueByTime.map((r) => ({
         time: r._id,
