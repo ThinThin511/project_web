@@ -13,8 +13,8 @@ import Overview from "@/views/Overview.vue";
 const routes = [
   {
     path: "/",
-    name: "Nhà sản xuất ",
-    component: Publisher,
+    name: "Thống kê ",
+    component: Overview,
     beforeEnter: (to, from, next) => {
       // Kiểm tra xem userStore có tồn tại không
       if (!useUserStore().login) {
@@ -106,9 +106,9 @@ const routes = [
     },
   },
   {
-    path: "/overview",
-    name: "Thống kê",
-    component: Overview,
+    path: "/publisher",
+    name: "Nhà sản xuất",
+    component: Publisher,
     beforeEnter: (to, from, next) => {
       // Kiểm tra xem userStore có tồn tại không
       if (!useUserStore().login) {

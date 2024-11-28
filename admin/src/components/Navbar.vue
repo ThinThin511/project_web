@@ -3,13 +3,13 @@
         <img class="navigation__logo" src="../assets/logo.png" alt="Logo" />
         <ul class="navigation__link">
             <li class="navigation__link__items">
-                <router-link class="navigation__link__items__route" to="/overview">
+                <router-link class="navigation__link__items__route" to="/">
                     <i class="ri-dashboard-line"></i> 
                     <span>Thống kê</span>
                 </router-link>
             </li>
             <li class="navigation__link__items">
-                <router-link class="navigation__link__items__route" to="/">
+                <router-link class="navigation__link__items__route" to="/publisher">
                     <i class="ri-dashboard-line"></i> 
                     <span>Nhà sản xuất</span>
                 </router-link>
