@@ -1,4 +1,8 @@
 <template>
+    <div class="header__left"> 
+    <router-link to="/" class="header__left__link">Gia dụng xanh</router-link> 
+    <span> / {{ this.$route.name }}</span>
+</div>
     <div class="about">
         <div class="about__inside">
             <h1>Giới thiệu</h1>
@@ -28,6 +32,35 @@ export default {
 </script>
 
 <style>
+.header__left {
+    width: 100%; /* Để header trải dài */
+    text-align: left; /* Căn text về bên trái */
+    padding: 10px 20px; /* Khoảng cách trong */
+    background-color: #f8fff5; /* Nền trắng xanh nhạt */
+    border-bottom: 2px solid #e0e0e0; /* Đường gạch ngang ở dưới */
+    font-size: 1rem; /* Kích thước chữ vừa đủ */
+    font-weight: 500;
+    display: flex;
+    align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+.header__left__link {
+    color: #2e8b57; /* Màu xanh lá đậm */
+    text-decoration: none; /* Loại bỏ gạch chân */
+    font-weight: bold;
+    transition: color 0.3s ease; /* Hiệu ứng chuyển màu */
+}
+
+.header__left__link:hover {
+    color: #3cb371; /* Màu xanh đậm hơn khi hover */
+    text-decoration: underline; /* Hiển thị gạch chân khi hover */
+}
+
+.header__left span {
+    color: #555; /* Màu xám nhạt hơn để phân biệt */
+    margin-left: 5px; /* Khoảng cách giữa "Gia dụng xanh" và "/" */
+    font-weight: normal;
+}
 .about {
     color: #000;
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../assets/about.jpg");

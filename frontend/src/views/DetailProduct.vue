@@ -8,12 +8,11 @@
         <div class="detail__info col-sm-6 ">
             <h3 class="detail__name">{{ item.ten }}</h3>
             <p>{{ item.mota }}</p>
-            <p>Tác giả: {{ item.tacgia }}</p>
-            <p>Nhà xuất bản: {{ item.nhaxuatban }}</p>
+            <p>Sản xuất: {{ item.nhasanxuat }}</p>
             <p>Giá: <span style="color: var(--color-main);font-weight: 700;">{{ parseInt(item.dongia).toLocaleString() }}</span></p>
             <p>Số lượng còn lại: {{ item.soluong }}</p>
             <input type="number" min="1" v-model="quanlity" style="width: 40pt; border-radius: 20pt; padding-left: 5pt;">
-            <div class="row justify-content-center"> <button class="btn btn-info" @click="addToCart(this.item)" style="border-radius: 30pt;  width: 200px;">Thêm vào giỏ sách</button></div>
+            <div class="row justify-content-center"> <button class="btn btn-info" @click="addToCart(this.item)" style="border-radius: 30pt;  width: 200px;">Thêm vào giỏ hàng</button></div>
             
         </div>
        </div>

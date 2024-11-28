@@ -1,8 +1,11 @@
 <template>
     <Notification :message="message" />
-    
+    <div class="header__left"> 
+    <router-link to="/" class="header__left__link">Gia dụng xanh</router-link> 
+    <span> / {{ this.$route.name }}</span>
+</div>
     <div class="cart row col-12">
-        <h1 class="cart__title text-success" style="margin-top: 20pt !important; margin-left: 20pt;">GIỎ SÁCH</h1>
+        <h1 class="cart__title text-success" style="margin-top: 20pt !important; margin-left: 20pt;">Giỏ hàng</h1>
         <div class="cart__body col-lg-8 mx-auto" v-if="userStore.cart.length > 0">
             <div v-for="(item, index) in userStore.cart" :key="item._id" class="cart__body__item row align-items-center">
                 <!-- Hình ảnh sản phẩm -->

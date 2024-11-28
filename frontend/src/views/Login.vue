@@ -88,7 +88,7 @@ export default {
     align-items: center;
     flex-direction: column;
     text-align: center;
-    background: url('../assets/homepage.jpg') no-repeat center center fixed;
+    background: url('../assets/edit.webp') no-repeat center center fixed;
     background-size: cover;
 }
 

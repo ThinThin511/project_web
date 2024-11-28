@@ -1,11 +1,15 @@
 <template>
+    <div class="header__left"> 
+        <router-link to="/" class="header__left__link">Gia dụng xanh</router-link> 
+        <span> / {{ this.$route.name }}</span>
+    </div>
     <div class="register">
-        <form action="" method="" @submit.prevent="handleSubmit">
-            <div v-if="register" class="alert alert-success">
-                Thành công
+        <form @submit.prevent="handleSubmit">
+            <div v-if="success" class="alert alert-success">
+                Cập nhật thông tin thành công
             </div>
-            <h1>Đăng Ký</h1>
-            <div class="register__info ">
+            <h1>Cập nhật thông tin</h1>
+            <div class="register__info">
                 <div class="register__info__item">
                     <label for="" class="">Họ:</label>
                     <input required type="text" v-model="ho">
@@ -15,14 +19,14 @@
                     <input required type="text" v-model="ten">
                 </div>
             </div>
-            <div class="register__info ">
+            <div class="register__info">
                 <div class="register__info__item">
                     <label for="" class="">Số điện thoại:</label>
                     <input required maxlength="10" minlength="10" type="text" v-model="sodienthoai">
                 </div>
                 <div class="register__info__item">
                     <label for="" class="">Giới tính:</label>
-                    <select name="" id="" v-model="gioitinh">
+                    <select v-model="gioitinh">
                         <option value="Nam">Nam</option>
                         <option value="Nữ">Nữ</option>
                     </select>
@@ -32,73 +36,75 @@
                 <label for="">Ngày sinh:</label>
                 <input required type="date" v-model="ngaysinh" max="2018-12-31">
             </div>
-            <div class="register__info ">
-                <div class="register__info__item">
-                    <label for="" class="">Mật khẩu:</label>
-                    <input required type="password" v-model="password">
-                </div>
-                <div class="register__info__item">
-                    <label for="" class="">Xác nhận mật khẩu:</label>
-                    <input required type="password" v-model="password_comfirm">
-                </div>
-            </div>
             <div class="register__info register__info__item">
                 <label for="">Địa chỉ:</label>
-                <textarea name="" id="" cols="30" rows="3" v-model="diachi"></textarea>
+                <textarea cols="30" rows="3" v-model="diachi"></textarea>
             </div>
-
-
-
-
-            <button class="m-1 btn btn-outline-info">Đăng ký</button>
-            <p class="m-1">
-                Bạn đã có tài khoản?
-                <router-link to="/login">Đăng nhập</router-link>
-            </p>
+            <button class="m-1 btn btn-outline-info">Lưu thay đổi</button>
         </form>
     </div>
 </template>
 
 <script>
-import userService from '@/services/user.service'
+import { useUserStore } from "@/stores/userStore";
+import userService from "@/services/user.service";
 
 export default {
+    data() {
+        return {
+            ho: "",
+            ten: "",
+            sodienthoai: "",
+            gioitinh: "",
+            ngaysinh: "",
+            diachi: "",
+            success: false,
+        };
+    },
+    created() {
+        const userStore = useUserStore();
+        if (userStore.user) {
+            // Gán thông tin từ store vào các trường dữ liệu
+            const { ho, ten, sodienthoai, gioitinh, ngaysinh, diachi,id } = userStore.user;
+            this.id = id || "";
+            this.ho = ho || "";
+            this.ten = ten || "";
+            this.sodienthoai = sodienthoai || "";
+            this.gioitinh = gioitinh || "";
+            this.ngaysinh = ngaysinh || "";
+            this.diachi = diachi || "";
+        }
+    },
     methods: {
         async handleSubmit() {
+            const userStore = useUserStore(); // Lấy thông tin người dùng từ store
+            const userId = userStore.user._id; // Lấy ID người dùng
+
             const data = {
                 ho: this.ho,
                 ten: this.ten,
-                ngaysinh: this.ngaysinh,
-                diachi: this.diachi,
                 sodienthoai: this.sodienthoai,
                 gioitinh: this.gioitinh,
-                password: this.password
-            }
-            try {
-                this.register = await userService.register(data);
-                this.message = "thành công.";
-            } catch (error) {
-                console.log(error);
-            }
+                ngaysinh: this.ngaysinh,
+                diachi: this.diachi,
+            };
 
-        }
+            try {
+                // Gọi API cập nhật thông tin
+                const updatedUser = await userService.updateUser(userId, data);
+
+                // Cập nhật thông tin user trong store
+                userStore.setUser(updatedUser);
+
+                this.success = true; // Hiển thị thông báo thành công
+            } catch (error) {
+                console.error("Lỗi khi cập nhật thông tin:", error);
+            }
+        },
     },
-    data() {
-        return {
-            ho: '',
-            ten: '',
-            sodienthoai: '',
-            password: '',
-            password_comfirm: '',
-            email: '',
-            diachi:'',
-            ngaysinh:'',
-            gioitinh: '',
-            register: null,
-        }
-    }
-}
+};
 </script>
+
 
 <style>
 .register {
@@ -113,7 +119,35 @@ export default {
         background: url('../assets/edit.webp') no-repeat center center fixed;
         background-size: cover;
 }
+.header__left {
+    width: 100%; /* Để header trải dài */
+    text-align: left; /* Căn text về bên trái */
+    padding: 10px 20px; /* Khoảng cách trong */
+    background-color: #f8fff5; /* Nền trắng xanh nhạt */
+    border-bottom: 2px solid #e0e0e0; /* Đường gạch ngang ở dưới */
+    font-size: 1rem; /* Kích thước chữ vừa đủ */
+    font-weight: 500;
+    display: flex;
+    align-items: center; /* Căn giữa theo chiều dọc */
+}
 
+.header__left__link {
+    color: #2e8b57; /* Màu xanh lá đậm */
+    text-decoration: none; /* Loại bỏ gạch chân */
+    font-weight: bold;
+    transition: color 0.3s ease; /* Hiệu ứng chuyển màu */
+}
+
+.header__left__link:hover {
+    color: #3cb371; /* Màu xanh đậm hơn khi hover */
+    text-decoration: underline; /* Hiển thị gạch chân khi hover */
+}
+
+.header__left span {
+    color: #555; /* Màu xám nhạt hơn để phân biệt */
+    margin-left: 5px; /* Khoảng cách giữa "Gia dụng xanh" và "/" */
+    font-weight: normal;
+}
 .register::before {
     content: '';
     /* Tạo lớp phủ */

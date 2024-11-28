@@ -5,32 +5,51 @@
                 <p>{{ message }}</p>
             </div>
         </div>
-        <div class="products__product col-lg-10 col-md-9 col-12">
-            <Filter :min="priceRange.min" 
-            :max="priceRange.max" 
-            @sort="sort" 
-            @range="range" />
-            <div class="products__product__list" v-if="products.length > 0">
-                <div class="products__product__item col-lg-2 col-3" v-for="item in products" :key="item._id">
-                    <router-link :to="{ path: '/product/' + item._id}" class="products__product__item__image">
-                        <img :src="'http://localhost:3000/static/' + item.hinhanh" alt="Product image">
-                    </router-link>
-                    
-                    <div class="products__product__item__information">
-                        <p class="products__product__item__name">{{ item.ten }}</p>
-                        <p class="products__product__item__price">{{ parseInt(item.dongia).toLocaleString() }}</p>
-                    </div>
-                    <div class="products__product__item__button">
-                        <button v-if="item.soluong > 0" @click="addToCart(item)">Thêm vào giỏ hàng</button>
-                        <button v-else class="btn btn-secondary" disabled>Hết hàng</button>
-                        <router-link :to="{ path: '/product/' + item._id}">Xem thêm</router-link>
+        <div class="header__left"> 
+            <router-link to="/" class="header__left__link">Gia dụng xanh</router-link> 
+            <span> / {{ this.$route.name }}</span>
+        </div>
+        <div class="products__content">
+            <!-- Filter nằm bên trái -->
+            <div class="products__filter">
+                <Filter 
+                    :min="priceRange.min" 
+                    :max="priceRange.max" 
+                    :categories="categories"
+                    @sort="sort" 
+                    @range="range" 
+                    @filterCategory="filterByCategory"
+                     
+       
+                />
+                <ProductList :products="filteredProducts" />
+            </div>
+
+            <!-- Danh sách sản phẩm nằm bên phải -->
+            <div class="products__product">
+                <div class="products__product__list" v-if="products.length > 0">
+                    <div class="products__product__item" v-for="item in products" :key="item._id">
+                        <router-link :to="{ path: '/product/' + item._id}" class="products__product__item__image">
+                            <img :src="'http://localhost:3000/static/' + item.hinhanh" alt="Product image">
+                        </router-link>
+                        
+                        <div class="products__product__item__information">
+                            <p class="products__product__item__name">{{ item.ten }}</p>
+                            <p class="products__product__item__price">{{ parseInt(item.dongia).toLocaleString() }}</p>
+                        </div>
+                        <div class="products__product__item__button">
+                            <button v-if="item.soluong > 0" @click="addToCart(item)">Thêm vào giỏ hàng</button>
+                            <button v-else class="btn btn-secondary" disabled>Hết hàng</button>
+                            <router-link :to="{ path: '/product/' + item._id}">Xem thêm</router-link>
+                        </div>
                     </div>
                 </div>
+                <div class="products__product__list" v-else>Không có sản phẩm nào</div>         
             </div>
-            <div class="products__product__list row m-2" v-else>Không có sản phẩm nào</div>         
         </div>
     </div>
 </template>
+
 
 <script>
 import ProductsService from "@/services/book.service";
@@ -54,16 +73,19 @@ export default {
     computed: {
         productStrings() {
             return this.products.map((product) => {
-                const { ten, mota, nhasanxuat } = product;
-                return [ten, mota, nhasanxuat].join(" ").toUpperCase();
+                const { ten, mota, nhasanxuat,danhmuc } = product;
+                return [ten, mota, nhasanxuat,danhmuc].join(" ").toUpperCase();
             });
         },
         filteredProducts() {
-            if (this.query === '') return this.products;
-            return this.products.filter((_, index) =>
-                this.productStrings[index].includes(this.query.toUpperCase())
-            );
-        },
+        return this.products.filter(product => {
+            const matchesQuery = !this.query || this.productStrings.includes(product.ten.toUpperCase());
+            const matchesCategory = !this.selectedCategory || product.danhmuc === this.selectedCategory;
+            const matchesPrice = product.dongia >= this.minPrice && product.dongia <= this.maxPrice;
+
+            return matchesQuery && matchesCategory && matchesPrice;
+        });
+    }
     },
     data() {
         return {
@@ -74,6 +96,9 @@ export default {
                 min: 0, // Giá thấp nhất ban đầu
                 max: 1000000, // Giá cao nhất ban đầu
             },
+            categories:[],
+            selectedCategory: '',
+            
         }
     },
     methods: {
@@ -85,6 +110,8 @@ export default {
             const prices = this.products.map(item => item.dongia);
             this.priceRange.min = Math.min(...prices);
             this.priceRange.max = Math.max(...prices);
+
+            this.categories = [...new Set(this.products.map(item => item.danhmuc))];
         },
         async addToCart(data) {
             if (!useUserStore().login) {
@@ -121,14 +148,68 @@ export default {
             parseInt(item.dongia) >= parseInt(minPrice) && 
             parseInt(item.dongia) <= parseInt(maxPrice) &&
             item.deleted === 0
-        );
+            );
+        },
+        filterByCategory() {
+            console.log(this.selectedCategory);
+    if (this.selectedCategory === '') {
+        this.getData(); // Hiển thị tất cả sản phẩm
+    } else {
+        this.products = this.products.filter(product => product.danhmuc === this.selectedCategory);
     }
+},
     }
 }
 </script>
 
 
 <style>
+.products__content {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* Khoảng cách giữa bộ lọc và sản phẩm */
+    width: 100%;
+    margin-top: 20px;
+}
+.header__left {
+    width: 100%; /* Để header trải dài */
+    text-align: left; /* Căn text về bên trái */
+    padding: 10px 20px; /* Khoảng cách trong */
+    background-color: #f8fff5; /* Nền trắng xanh nhạt */
+    border-bottom: 2px solid #e0e0e0; /* Đường gạch ngang ở dưới */
+    font-size: 1rem; /* Kích thước chữ vừa đủ */
+    font-weight: 500;
+    display: flex;
+    align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+.header__left__link {
+    color: #2e8b57; /* Màu xanh lá đậm */
+    text-decoration: none; /* Loại bỏ gạch chân */
+    font-weight: bold;
+    transition: color 0.3s ease; /* Hiệu ứng chuyển màu */
+}
+
+.header__left__link:hover {
+    color: #3cb371; /* Màu xanh đậm hơn khi hover */
+    text-decoration: underline; /* Hiển thị gạch chân khi hover */
+}
+
+.header__left span {
+    color: #555; /* Màu xám nhạt hơn để phân biệt */
+    margin-left: 5px; /* Khoảng cách giữa "Gia dụng xanh" và "/" */
+    font-weight: normal;
+}
+
+/* Filter nằm bên trái */
+.products__filter {
+    width: 25%; /* Filter chiếm 25% không gian */
+    background: #f8f8f8; /* Màu nền nhạt cho Filter */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    height: auto; /* Tự động điều chỉnh chiều cao */
+}
 
 .products {
     min-height: 100vh;
@@ -141,10 +222,17 @@ export default {
     padding: 20px 0;
 }
 
+.products__product {
+    width: 70%; /* Sản phẩm chiếm 70% không gian */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .products__product__list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 20px;
 }
 

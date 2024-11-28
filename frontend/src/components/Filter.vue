@@ -1,34 +1,48 @@
 <template>
     <div class="filter">
+        <div class="filter__category">
+            <label>Loại hàng:</label>
+            <select @change="filterCategory" v-model="selectedCategory" class="form-select form-select-sm w-100">
+                <option :value="''">Tất cả</option>
+                <option v-for="category in categories" :key="category" :value="category">
+                    {{ category }}
+                </option>
+            </select>
+        </div>
         <div class="filter__price">
             Sắp xếp giá:
-            <select @change="handleSort" v-model="sort">
+            <select 
+                @change="handleSort" 
+                v-model="sort" 
+                class="form-select form-select-sm w-75 d-inline-block"
+            >
                 <option :value="''">Mặc định</option>
                 <option value="asc">Tăng dần</option>
                 <option value="desc">Giảm dần</option>
             </select>
         </div>
         <div class="filter__range">
-    <label>Mức giá: {{ formatPrice(minPrice) }} VNĐ - {{ formatPrice(maxPrice) }} VNĐ</label>
-    <div class="range-wrapper">
-        <!-- Thanh trượt giá thấp nhất -->
-        <input 
-            type="range" 
-            v-model="minPrice" 
-            :min="propsMin" 
-            :max="propsMax" 
-            @input="filterPrice"
-        />
-        <!-- Thanh trượt giá cao nhất -->
-        <input 
-            type="range" 
-            v-model="maxPrice" 
-            :min="propsMin" 
-            :max="propsMax" 
-            @input="filterPrice"
-        />
-    </div>
-</div>
+            <label>Mức giá: {{ formatPrice(minPrice) }} VNĐ - {{ formatPrice(maxPrice) }} VNĐ</label>
+            <div class="range-wrapper">
+                <!-- Thanh trượt giá thấp nhất -->
+                <input 
+                    type="range" 
+                    v-model="minPrice" 
+                    :min="propsMin" 
+                    :max="propsMax" 
+                    @input="filterPrice"
+                />
+                <!-- Thanh trượt giá cao nhất -->
+                <input 
+                    type="range" 
+                    v-model="maxPrice" 
+                    :min="propsMin" 
+                    :max="propsMax" 
+                    @input="filterPrice"
+                />
+            </div>
+        </div>
+        
     </div>
 </template>
 
@@ -43,6 +57,10 @@ export default {
         type: Number,
         required: true,
     },
+    categories: { // Danh sách loại hàng được truyền từ component cha
+            type: Array,
+            required: true,
+        },
 },
 computed: {
     propsMin() {
@@ -59,6 +77,7 @@ data() {
     return {
         minPrice: this.min, // Giá thấp nhất
         maxPrice: this.max, // Giá cao nhất
+        selectedCategory: '',
     };
 },
 watch: {
@@ -75,7 +94,10 @@ watch: {
         },
         filterPrice() {
             this.$emit('range', { minPrice: this.minPrice, maxPrice: this.maxPrice });
-        }
+        },
+        filterCategory() {
+            this.$emit('filterCategory', this.selectedCategory); // Phát sự kiện và gửi loại hàng được chọn về cha
+        },
     }
 };
 </script>
@@ -91,6 +113,19 @@ watch: {
     max-width: 300px;
     margin: auto;
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+}
+.filter__category {
+    margin-bottom: 16px;
+}
+
+.filter__category label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #388e3c;
+}
+
+.filter__category select {
+    margin-top: 8px;
 }
 
 .filter__price, .filter__range {
@@ -112,7 +147,13 @@ watch: {
 }
 
 .range-wrapper input[type="range"] {
-    flex: 1; /* Để mỗi thanh trượt chiếm không gian ngang đều */
+    flex: 1;
+    appearance: none;
+    width: 100%;
+    background: #dcedc8; /* Màu xanh nhạt */
+    height: 6px;
+    border-radius: 5px;
+    outline: none;
 }
 
 .range-wrapper input[type="range"]::-webkit-slider-thumb {
@@ -120,7 +161,7 @@ watch: {
     height: 16px;
     width: 16px;
     border-radius: 50%;
-    background: #b71c1c;
+    background: #4caf50; /* Màu xanh lá */
     border: 2px solid #fff;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -129,14 +170,14 @@ watch: {
 
 .range-wrapper input[type="range"]::-webkit-slider-thumb:hover {
     transform: scale(1.1);
-    background: #880e4f;
+    background: #388e3c; /* Xanh lá đậm hơn khi hover */
 }
 
 .range-wrapper input[type="range"]::-moz-range-thumb {
     height: 16px;
     width: 16px;
     border-radius: 50%;
-    background: #b71c1c;
+    background: #4caf50;
     border: 2px solid #fff;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -145,7 +186,7 @@ watch: {
 
 .range-wrapper input[type="range"]::-moz-range-thumb:hover {
     transform: scale(1.1);
-    background: #880e4f;
+    background: #388e3c;
 }
 
 

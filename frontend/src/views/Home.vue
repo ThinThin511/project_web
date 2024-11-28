@@ -1,36 +1,88 @@
 <template>
-    <!-- <AppHeader /> -->
     <div class="home">
         <div class="home__one">
             <div class="home__one__element">
-                <h1>Chào mừng đến với Thư Viện Sách</h1>
-                <p>Sở hữu không gian mua sắm rộng rãi, thoáng mát với đầy đủ các thể loại sách đa dạng phong phú, từ sách văn học, khoa học kỹ thuật, kinh tế, ngoại ngữ,... đến sách thiếu nhi, truyện tranh,... đáp ứng mọi nhu cầu đọc của quý khách hàng.</p>
+                <h1>Chào mừng đến với Gia Dụng Xanh</h1>
+                <p>Gia Dụng Xanh chuyên cung cấp các sản phẩm đồ gia dụng chất lượng cao với giá cả hợp lý. Từ các thiết bị nhà bếp, đồ dùng phòng tắm, đồ trang trí nội thất cho đến các sản phẩm bảo vệ sức khỏe, chúng tôi cam kết mang đến cho khách hàng những sản phẩm tiện ích, thân thiện với môi trường.</p>
                 <router-link to="/product">
-                    <button class="">Xem Sách</button>
+                    <button class="">Xem sản phẩm</button>
                 </router-link>
             </div>
         </div>
+
+        <!-- Sản phẩm mới -->
         <div class="home__two">
-            <div class="home__two__left">
-                <img src="../assets/homepic1.jpg" alt="">
-                <img src="../assets/homepic2.png" alt="">
-            </div>  
-            <div class="home__two__right">
-                <h2>Cửa hàng chúng tôi</h2>
-                <p>
-                    Không gian thư viện được bài trí tinh tế với những góc đọc nhỏ xinh, ánh sáng dịu nhẹ, tạo cảm giác thư giãn và dễ chịu. Những chiếc ghế êm ái tựa như mời gọi ta chìm đắm vào từng trang sách, đắm chìm trong những câu chuyện, những khám phá mới mẻ.
-                </p>
-                <p>
-                    Thiên đường tri thức là nơi chắp cánh cho ước mơ, nuôi dưỡng niềm đam mê và lan tỏa tri thức đến cộng đồng. Đến đây, bạn không chỉ tìm được những cuốn sách yêu thích mà còn có cơ hội gặp gỡ những người bạn đồng điệu, cùng nhau chia sẻ niềm đam mê đọc và học hỏi.
-                </p>
+            <h2>Sản phẩm mới</h2>
+            <div class="product-list">
+                <div v-for="product in newProducts" :key="product._id" class="product-item">
+                    <img :src="'http://localhost:3000/static/' + product.hinhanh" alt="product.ten" />
+                    <p>{{ product.ten }}</p>
+                    <p>{{ product.dongia.toLocaleString() }} VNĐ</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sản phẩm theo danh mục -->
+        <div class="home__two">
+            <h2>Sản phẩm theo danh mục</h2>
+            <div v-for="category in categories" :key="category._id" class="category-section">
+                <h3>{{ category }}</h3>
+                <div class="product-list">
+                    <div v-for="product in getProductsByCategory(category)" :key="product._id" class="product-item">
+                        <img :src="'http://localhost:3000/static/' + product.hinhanh" alt="product.ten" />
+                        <p>{{ product.ten }}</p>
+                        <p>{{ product.dongia.toLocaleString() }} VNĐ</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import ProductsService from "@/services/book.service";  // Import dịch vụ lấy sản phẩm
+
 export default {
-    
+    data() {
+        return {
+            newProducts: [],  // Sản phẩm mới
+            allProducts: [],  // Tất cả sản phẩm
+            categories: [],    // Danh sách các danh mục
+        };
+    },
+    created() {
+        this.loadProducts();
+    },
+    methods: {
+        // Lấy tất cả sản phẩm khi component được khởi tạo
+        async loadProducts() {
+            try {
+                // Gọi API để lấy danh sách tất cả sản phẩm
+                const response = await ProductsService.getAll();
+                if (response && Array.isArray(response)) {
+                    this.allProducts = response;  // Giả sử response trả về là danh sách sản phẩm
+
+                    // Kiểm tra nếu mỗi sản phẩm có thuộc tính 'danhmuc' hợp lệ
+                    this.allProducts = this.allProducts.filter(product => product.danhmuc);
+
+                    // Phân loại sản phẩm mới (giả sử có thuộc tính isNew)
+                    this.newProducts = this.allProducts.filter(product => product.isNew);
+
+                    // Lấy danh sách các danh mục duy nhất từ các sản phẩm
+                    this.categories = [...new Set(this.allProducts.map(product => product.danhmuc))];
+                } else {
+                    console.error('Dữ liệu không hợp lệ:', response);
+                }
+            } catch (error) {
+                console.error("Lỗi khi lấy sản phẩm:", error);
+            }
+        },
+
+        // Lọc sản phẩm theo danh mục
+        getProductsByCategory(categoryId) {
+            return this.allProducts.filter(product => product.danhmuc && product.danhmuc === categoryId);
+        }
+    }
 }
 </script>
 
@@ -41,7 +93,7 @@ export default {
     color: #000;
     height: calc(100vh - 100px);
     max-width: 100%;
-    background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url('../assets/homepage.jpg');
+    background: linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), url('../assets/edit.webp');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -52,6 +104,7 @@ export default {
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background-color: aliceblue;
 }
 
 .home__one__element {
@@ -103,73 +156,87 @@ export default {
     color: #333;
     padding: 40px 20px;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
     gap: 40px;
     border-radius: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.home__two__left {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    align-items: center;
-    max-width: 50%;
-}
-
-.home__two__left img {
-    display: block;
-    border-radius: 15px;
-    max-width: 45%;
-    height: auto;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.home__two__left img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-}
-
-.home__two__right {
-    max-width: 40%;
-    text-align: left;
-    padding: 10px;
-}
-
-.home__two__right h2 {
-    color: #2E8B57; /* Xanh lá nhạt */
+/* Tiêu đề cho các phần sản phẩm */
+.home__two h2 {
+    font-family: "Tilt Neon", sans-serif;
+    color: #2E8B57; /* Màu xanh lá nhạt */
     font-weight: 600;
-    margin-bottom: 20px;
     font-size: 2rem;
-    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-.home__two__right p {
-    font-weight: 400;
+/* Sắp xếp các sản phẩm bằng Flexbox hoặc Grid */
+.product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Tạo lưới responsive */
+    gap: 20px;
+    justify-items: center;
+    margin-top: 20px;
+}
+
+.product-item {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s ease;
+}
+
+/* Hiệu ứng hover cho mỗi sản phẩm */
+.product-item:hover {
+    transform: translateY(-5px); /* Đẩy sản phẩm lên một chút */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+/* Hình ảnh sản phẩm */
+.product-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.product-item img:hover {
+    transform: scale(1.05); /* Phóng to khi hover */
+}
+
+/* Các văn bản hiển thị trong mỗi sản phẩm */
+.product-item p {
+    font-weight: 500;
     font-size: 1.1rem;
-    line-height: 1.8;
-    margin-bottom: 20px;
+    color: #333;
+    margin-top: 10px;
+    line-height: 1.6;
+}
+
+.product-item p:nth-child(2) {
+    font-weight: 700;
+    color: #2E8B57;
+    font-size: 1.2rem;
+    margin-top: 5px;
 }
 
 /* Responsive Design */
 @media screen and (max-width: 768px) {
-    .home__two {
-        flex-direction: column;
+    .product-list {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Điều chỉnh cột cho màn hình nhỏ */
     }
-
-    .home__two__left,
-    .home__two__right {
-        max-width: 100%;
-    }
-
-    .home__one p {
-        width: 90%;
+    .product-item {
+        padding: 15px;
     }
 }
+
 
 
 </style>
