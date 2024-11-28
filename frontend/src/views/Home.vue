@@ -11,7 +11,7 @@
         </div>
 
         <!-- Sản phẩm mới -->
-        <div class="home__two">
+        <!-- <div class="home__two">
             <h2>Sản phẩm mới</h2>
             <div class="product-list">
                 <div v-for="product in newProducts" :key="product._id" class="product-item">
@@ -20,7 +20,7 @@
                     <p>{{ product.dongia.toLocaleString() }} VNĐ</p>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <!-- Sản phẩm theo danh mục -->
         <div class="home__two">
@@ -58,6 +58,7 @@ export default {
         async loadProducts() {
             try {
                 // Gọi API để lấy danh sách tất cả sản phẩm
+                const currentDate = new Date();
                 const response = await ProductsService.getAll();
                 if (response && Array.isArray(response)) {
                     this.allProducts = response;  // Giả sử response trả về là danh sách sản phẩm
@@ -66,7 +67,15 @@ export default {
                     this.allProducts = this.allProducts.filter(product => product.danhmuc);
 
                     // Phân loại sản phẩm mới (giả sử có thuộc tính isNew)
-                    this.newProducts = this.allProducts.filter(product => product.isNew);
+                    this.newProducts = this.allProducts.filter(product => {
+                        if (product.ngaytao) {
+                            const productDate = new Date(product.ngaytao); // Chuyển `ngaytao` thành kiểu Date
+                            const diffTime = currentDate - productDate; // Tính khoảng cách thời gian
+                            const diffDays = diffTime / (1000 * 60 * 60 * 24); // Chuyển đổi sang ngày
+                            return diffDays <= 7; // Kiểm tra nếu sản phẩm trong vòng 7 ngày
+                        }
+                        return false; // Loại bỏ nếu không có `ngaytao`
+                    });
 
                     // Lấy danh sách các danh mục duy nhất từ các sản phẩm
                     this.categories = [...new Set(this.allProducts.map(product => product.danhmuc))];

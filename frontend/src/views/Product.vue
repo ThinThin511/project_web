@@ -78,13 +78,17 @@ export default {
             });
         },
         filteredProducts() {
-        return this.products.filter(product => {
+        // return this.products.filter(product => {
+            if (this.query === '') return this.products;
+            return this.products.filter((_, index) =>
+                this.productStrings[index].includes(this.query.toUpperCase())
+            );
             const matchesQuery = !this.query || this.productStrings.includes(product.ten.toUpperCase());
             const matchesCategory = !this.selectedCategory || product.danhmuc === this.selectedCategory;
             const matchesPrice = product.dongia >= this.minPrice && product.dongia <= this.maxPrice;
 
             return matchesQuery && matchesCategory && matchesPrice;
-        });
+        // });
     }
     },
     data() {
@@ -105,6 +109,9 @@ export default {
         async getData() {
             const allProducts = await ProductsService.getAll();
             this.products = allProducts.filter(item => item.deleted === 0);
+            if (this.query !== '') {
+                this.products = this.filteredProducts;
+            }
 
             // Tìm giá thấp nhất và cao nhất
             const prices = this.products.map(item => item.dongia);

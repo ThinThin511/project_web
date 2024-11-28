@@ -1,4 +1,8 @@
 <template>
+    <div class="header__left"> 
+            <router-link to="/" class="header__left__link">Gia dụng xanh</router-link> 
+            <span> / {{ this.$route.name }}</span>
+        </div>
     <div class="detail">
         <Notification :message="message" />
        <div v-if="item" class="col-sm-11 row">
@@ -17,6 +21,20 @@
         </div>
        </div>
        <p v-else>Không có sản phẩm</p>
+    </div>
+
+    <div v-if="relatedProducts.length > 0" class="related-products">
+        <h3>Có thể bạn quan tâm</h3>
+        <div class="row">
+            <div v-for="product in relatedProducts" :key="product._id" class="col-sm-3">
+                <div class="product-card">
+                    <img :src="'http://localhost:3000/static/' + product.hinhanh" alt="" class="product-card__image">
+                    <h4 class="product-card__name">{{ product.ten }}</h4>
+                    <p>Giá: {{ parseInt(product.dongia).toLocaleString() }}</p>
+                    <router-link :to="'/product/' + product._id" class="btn btn-info">Xem chi tiết</router-link>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -41,8 +59,23 @@ export default {
     },
     methods: {
         async getItem() {
+        try {
+            // Lấy thông tin sản phẩm chi tiết
             this.item = await ProductService.getOne(this.$route.params.id);
-        },
+            
+            if (this.item) {
+                // Lấy danh sách tất cả sản phẩm
+                const allProducts = await ProductService.getAll();
+
+                // Lọc sản phẩm cùng danh mục (ngoại trừ sản phẩm hiện tại)
+                this.relatedProducts = allProducts.filter(product => 
+                    product.danhmuc === this.item.danhmuc && product._id !== this.item._id
+                );
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin sản phẩm:", error);
+        }
+    },
          async addToCart(data) {
             if (!useUserStore().login) {
               // Hiển thị thông báo yêu cầu đăng nhập
@@ -71,6 +104,8 @@ export default {
     data() {
         return {
             item: '',
+            
+            relatedProducts: [],
             quanlity: 1,
             message: ''
         }
@@ -166,6 +201,51 @@ export default {
     background-color: #76c476;
     transform: translateY(-2px);
     cursor: pointer;
+}
+.related-products {
+    margin-top: 30px;
+    padding: 20px 0;
+    background-color: #f9f9f9;
+    border-top: 2px solid #eaeaea;
+}
+
+.related-products h3 {
+    font-size: 1.5rem;
+    color: #2e8b57;
+    margin-bottom: 20px;
+}
+
+.product-card {
+    background: #ffffff;
+    border: 1px solid #eaeaea;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    transition: box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.product-card__image {
+    width: 100%;
+    max-width: 150px;
+    margin: 0 auto;
+    border-radius: 5px;
+    object-fit: cover;
+}
+
+.product-card__name {
+    font-size: 1rem;
+    margin: 10px 0;
+    color: #2e8b57;
+}
+
+.product-card p {
+    font-size: 0.9rem;
+    margin: 5px 0;
+    color: #333;
 }
 
 </style>
