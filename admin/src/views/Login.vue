@@ -20,7 +20,7 @@
                         <i class="ri-lock-line"></i>
                         <input required :class="{'error': error}" type="password" v-model="password" placeholder="Mật khẩu">
                     </div>
-                    <p>Chưa có tài khoản? <router-link to="/register" class="">Đăng ký</router-link></p>
+                    <!-- <p>Chưa có tài khoản? <router-link to="/register" class="">Đăng ký</router-link></p> -->
                     <button class="m-1 btn btn-info">Đăng nhập</button>
             </form>
         </div>
