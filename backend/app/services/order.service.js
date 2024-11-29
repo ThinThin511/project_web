@@ -13,6 +13,7 @@ class OrderService {
       note: payload.note,
       method_payment: payload.method_payment,
       ngaydathang: payload.ngaydathang,
+      notify: payload.notify,
     };
     // Remove undefined fields
     Object.keys(order).forEach((key) => {

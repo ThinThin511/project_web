@@ -29,6 +29,20 @@
                     <router-link to="/cart">
                         <i class="fa-solid fa-bag-shopping header__icon__cart"></i>
                     </router-link>
+
+                    <!-- Thông báo chỗ này -->
+                </div>
+                <div class="header__function__item header__function__notification">
+                    <i class="fa-solid fa-bell" @click="toggleNotification"></i>
+                    <span v-if="notifications.length > 0" class="notification-dot"></span>
+                    <div class="notification-dropdown" v-if="showNotifications">
+                        <p v-if="notifications.length === 0">Không có thông báo</p>
+                        <ul v-else>
+                            <li v-for="(notification, index) in notifications" :key="index">
+                                {{ notification }}
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 
                 <div v-if="!userStore.login" class="header__function__item header__function__info">
@@ -62,24 +76,44 @@ export default {
     components: { Search },
     created() {
         this.getUser();
+        this.loadNotifications();
     },
     data() {
         return {
             showNav: false,
+            showNotifications: false,
             userStore: useUserStore(),
             user: {},
             search: '',
+            notifications: [], // Danh sách thông báo
         };
     },
     methods: {
         handleNav() {
             this.showNav = !this.showNav;
         },
+        
         async getUser() {
             if(this.userStore.login) {
                 this.user = await userService.get(this.userStore.user._id);
             }
-        }
+        },
+        async loadNotifications() {
+            try {
+                // Gọi API để lấy tất cả đơn hàng
+                const orders = await userService.getAllOrder();
+
+                // Xử lý danh sách đơn hàng để tạo thông báo
+                this.notifications = orders
+                    .filter(order => order.notify === 1) // Chỉ lấy đơn có notify = 1
+                    .map(order => `Đơn hàng ${order._id} của bạn ${order.trangthai}`); // Tạo thông báo
+            } catch (error) {
+                console.error("Lỗi khi tải thông báo:", error);
+            }
+        },
+        toggleNotification() {
+            this.showNotifications = !this.showNotifications;
+        },
     }
 }
 </script>
@@ -287,6 +321,65 @@ button:hover {
     margin-right: 5px;
     padding: 5px;
     border-radius: 50%;
+}
+.header__function__notification {
+    position: relative;
+    cursor: pointer;
+}
+
+.header__function__notification i {
+    font-size: 1.5rem;
+    color: #169400;
+}
+
+.header__function__notification i:hover {
+    color: #20d400;
+}
+
+.notification-dot {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 8px;
+    height: 8px;
+    background-color: red;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.notification-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 250px;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    border-radius: 8px;
+    z-index: 10;
+    padding: 10px;
+}
+
+.notification-dropdown ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notification-dropdown li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.notification-dropdown li:hover {
+    background-color: #d5ffd2;
+    color: #169400;
+}
+
+.notification-dropdown p {
+    text-align: center;
+    color: #777;
+    margin: 0;
 }
 
 @media only screen and (max-width: 790px) {

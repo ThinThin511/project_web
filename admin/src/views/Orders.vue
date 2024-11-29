@@ -124,6 +124,7 @@ export default {
                 tongtien: this.tongtien,
                 product: this.product,
                 trangthai: this.trangthai,
+                notify: 1,
             };
 
             // Gọi API cập nhật đơn mượn
